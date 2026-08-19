@@ -16,22 +16,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={cn("flex flex-col gap-1", containerClassName)}>
         {label && (
-          <label htmlFor={inputId} className="text-xs font-medium text-slate-600">
+          <label htmlFor={inputId} className="text-xs font-medium text-foreground-muted">
             {label}
           </label>
         )}
         <div className="relative flex items-center">
           {prefix && (
-            <div className="absolute left-3 text-slate-400 pointer-events-none">{prefix}</div>
+            <div className="absolute left-3 text-foreground-muted pointer-events-none">{prefix}</div>
           )}
           <input
             ref={ref}
             id={inputId}
             className={cn(
-              "w-full rounded-lg border border-slate-200 bg-white text-sm text-slate-800",
-              "placeholder:text-slate-400 transition-colors duration-150",
-              "focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500",
-              error ? "border-red-400 focus:ring-red-400/20 focus:border-red-400" : "",
+              "w-full rounded-lg border border-border bg-surface text-sm text-foreground",
+              "placeholder:text-foreground-muted transition-colors duration-150",
+              "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+              error ? "border-error focus:ring-error/20 focus:border-error" : "",
               prefix ? "pl-9" : "pl-3",
               suffix ? "pr-9" : "pr-3",
               "py-2",
@@ -40,10 +40,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {suffix && (
-            <div className="absolute right-3 text-slate-400">{suffix}</div>
+            <div className="absolute right-3 text-foreground-muted">{suffix}</div>
           )}
         </div>
-        {error && <p className="text-xs text-red-500">{error}</p>}
+        {error && <p className="text-xs text-error">{error}</p>}
       </div>
     );
   }
@@ -64,16 +64,16 @@ export function Select({ label, error, options, containerClassName, className, i
   return (
     <div className={cn("flex flex-col gap-1", containerClassName)}>
       {label && (
-        <label htmlFor={selectId} className="text-xs font-medium text-slate-600">
+        <label htmlFor={selectId} className="text-xs font-medium text-foreground-muted">
           {label}
         </label>
       )}
       <select
         id={selectId}
         className={cn(
-          "w-full rounded-lg border border-slate-200 bg-white text-sm text-slate-800 py-2 pl-3 pr-8",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500",
-          error ? "border-red-400" : "",
+          "w-full rounded-lg border border-border bg-surface text-sm text-foreground py-2 pl-3 pr-8",
+          "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+          error ? "border-error" : "",
           className
         )}
         {...props}
@@ -82,7 +82,7 @@ export function Select({ label, error, options, containerClassName, className, i
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-error">{error}</p>}
     </div>
   );
 }

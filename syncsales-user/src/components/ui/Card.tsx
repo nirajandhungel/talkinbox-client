@@ -18,9 +18,9 @@ export function Card({ children, padding = "md", hoverable, className, ...props 
   return (
     <div
       className={cn(
-        "bg-white rounded-xl border border-slate-100 shadow-card",
+        "bg-surface rounded-xl border border-border shadow-card",
         paddingClasses[padding],
-        hoverable && "cursor-pointer hover:shadow-card-md hover:border-slate-200 transition-shadow duration-150",
+        hoverable && "cursor-pointer hover:shadow-card-md hover:border-border transition-shadow duration-150",
         className
       )}
       {...props}
@@ -41,8 +41,8 @@ export function CardHeader({ title, subtitle, action, className }: CardHeaderPro
   return (
     <div className={cn("flex items-start justify-between mb-4", className)}>
       <div>
-        <h3 className="text-sm font-semibold text-slate-800">{title}</h3>
-        {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        {subtitle && <p className="text-xs text-foreground-muted mt-0.5">{subtitle}</p>}
       </div>
       {action && <div className="ml-4 flex-shrink-0">{action}</div>}
     </div>

@@ -44,7 +44,7 @@ export function Pagination({
   return (
     <div className={cn("flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 px-1", className)}>
       <div className="flex items-center gap-3">
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-foreground-muted">
           {from}–{to} of {total} results
         </p>
         {showPageSizeSelector && onPageSizeChange && (
@@ -54,7 +54,7 @@ export function Pagination({
               onPageSizeChange(Number(e.target.value));
               onPageChange(1);
             }}
-            className="text-xs border border-slate-200 rounded-lg px-2 py-1 text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 hidden sm:block"
+            className="text-xs border border-border rounded-lg px-2 py-1 text-foreground-muted bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 hidden sm:block"
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>{size} / page</option>
@@ -73,7 +73,7 @@ export function Pagination({
 
         {getPageNumbers().map((p, i) =>
           p === "..." ? (
-            <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-xs hidden sm:inline">…</span>
+            <span key={`ellipsis-${i}`} className="px-2 text-foreground-muted text-xs hidden sm:inline">…</span>
           ) : (
             <NavButton
               key={p}
@@ -88,7 +88,7 @@ export function Pagination({
           )
         )}
         {/* Mobile: show current page */}
-        <span className="text-xs font-medium text-slate-600 sm:hidden">{page} / {totalPages}</span>
+        <span className="text-xs font-medium text-foreground-muted sm:hidden">{page} / {totalPages}</span>
 
         <NavButton onClick={() => onPageChange(page + 1)} disabled={page === totalPages} aria-label="Next page">
           <ChevronRight size={14} />
@@ -112,8 +112,8 @@ function NavButton({ active, children, disabled, className, ...props }: NavButto
       className={cn(
         "min-w-[28px] h-7 flex items-center justify-center rounded-lg text-xs font-medium transition-colors",
         active
-          ? "bg-primary-600 text-white"
-          : "text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed",
+          ? "bg-primary text-primary-foreground"
+          : "text-foreground-muted hover:bg-surface-elevated disabled:opacity-40 disabled:cursor-not-allowed",
         className
       )}
       disabled={disabled}

@@ -17,8 +17,12 @@ const sizeClasses = {
 };
 
 const colors = [
-  "bg-primary-600", "bg-blue-500", "bg-purple-500",
-  "bg-rose-500", "bg-amber-500", "bg-teal-500",
+  "bg-primary text-primary-foreground",
+  "bg-surface-elevated text-foreground border border-border",
+  "bg-primary-soft text-primary",
+  "bg-warning/20 text-warning",
+  "bg-error/20 text-error",
+  "bg-success/20 text-success",
 ];
 
 function getColorFromName(name: string): string {
@@ -28,7 +32,7 @@ function getColorFromName(name: string): string {
 
 export function Avatar({ name, initials, src, size = "sm", color, className }: AvatarProps) {
   const displayInitials = initials ?? (name ? name.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase() : "?");
-  const bgColor = color ?? (name ? getColorFromName(name) : "bg-slate-400");
+  const bgColor = color ?? (name ? getColorFromName(name) : "bg-surface-elevated text-foreground-muted");
 
   if (src) {
     return (
@@ -43,7 +47,7 @@ export function Avatar({ name, initials, src, size = "sm", color, className }: A
   return (
     <div
       className={cn(
-        "rounded-full flex items-center justify-center text-white font-semibold shrink-0",
+        "rounded-full flex items-center justify-center font-semibold shrink-0",
         sizeClasses[size],
         bgColor,
         className
