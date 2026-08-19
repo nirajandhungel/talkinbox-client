@@ -4,7 +4,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell
 } from "recharts";
 import { accountingApi } from "@/api";
-import { QUERY_KEYS } from "@/constants";
+import { QUERY_KEYS, TX_TYPE_CONFIG, TX_STATUS_CONFIG } from "@/constants";
 import { formatCurrency, formatCompact } from "@/lib/utils";
 import { useSearch, usePagination } from "@/hooks";
 import { Card, CardHeader } from "@/components/ui/Card";
@@ -45,8 +45,8 @@ export default function AccountingPage() {
     <div className="space-y-5 max-w-[1200px]">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-slate-800">Accounting</h2>
-          <p className="text-xs text-slate-500">Financial ledger & analytics</p>
+          <h2 className="text-base font-bold text-foreground">Accounting</h2>
+          <p className="text-xs text-foreground-muted">Financial ledger & analytics</p>
         </div>
         <Button variant="outline" size="sm" icon={<Download size={13} />}>Export</Button>
       </div>
@@ -63,12 +63,12 @@ export default function AccountingPage() {
             { label: "Profit Margin", value: latestMonth && latestMonth.revenue > 0 ? `${Math.round((latestMonth.profit / latestMonth.revenue) * 100)}%` : "—", positive: true },
           ].map(s => (
             <Card key={s.label}>
-              <p className="text-2xl font-bold text-slate-800">{s.value}</p>
+              <p className="text-2xl font-bold text-foreground">{s.value}</p>
               <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-slate-500">{s.label}</p>
+                <p className="text-xs text-foreground-muted">{s.label}</p>
                 {s.positive
-                  ? <TrendingUp size={12} className="text-green-500" />
-                  : <TrendingDown size={12} className="text-red-500" />
+                  ? <TrendingUp size={12} className="text-success" />
+                  : <TrendingDown size={12} className="text-error" />
                 }
               </div>
             </Card>
@@ -102,7 +102,7 @@ export default function AccountingPage() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[180px] flex items-center justify-center text-sm text-slate-400">No cash flow data available</div>
+            <div className="h-[180px] flex items-center justify-center text-sm text-foreground-muted">No cash flow data available</div>
           )}
         </Card>
 
@@ -122,23 +122,23 @@ export default function AccountingPage() {
                 {expenseData.map(e => (
                   <div key={e.category} className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full shrink-0" style={{ background: e.color }} />
-                    <span className="text-[10px] text-slate-600 flex-1 truncate">{e.category}</span>
-                    <span className="text-[10px] font-medium text-slate-700">{formatCompact(e.amount)}</span>
+                    <span className="text-[10px] text-foreground-muted flex-1 truncate">{e.category}</span>
+                    <span className="text-[10px] font-medium text-foreground">{formatCompact(e.amount)}</span>
                   </div>
                 ))}
               </div>
             </>
           ) : (
-            <div className="h-[180px] flex items-center justify-center text-sm text-slate-400">No expense data available</div>
+            <div className="h-[180px] flex items-center justify-center text-sm text-foreground-muted">No expense data available</div>
           )}
         </Card>
       </div>
 
       {/* Transaction Ledger */}
       <Card padding="none">
-        <div className="px-5 py-4 flex items-center gap-3 border-b border-slate-100">
-          <BookOpen size={14} className="text-primary-600" />
-          <h3 className="text-sm font-semibold text-slate-800 flex-1">Transaction Ledger</h3>
+        <div className="px-5 py-4 flex items-center gap-3 border-b border-border">
+          <BookOpen size={14} className="text-primary" />
+          <h3 className="text-sm font-semibold text-foreground flex-1">Transaction Ledger</h3>
           <Input
             placeholder="Search transactions..."
             value={search}
@@ -154,39 +154,33 @@ export default function AccountingPage() {
           <>
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100">
+                <tr className="border-b border-border">
                   {["ID", "Date", "Type", "Category", "Description", "Amount", "Status"].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{h}</th>
+                    <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-foreground-muted uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {transactions.length === 0 ? (
-                  <tr><td colSpan={7} className="px-4 py-8 text-center text-sm text-slate-400">No transactions found</td></tr>
+                  <tr><td colSpan={7} className="px-4 py-8 text-center text-sm text-foreground-muted">No transactions found</td></tr>
                 ) : (
                   transactions.map((tx, i) => (
-                    <tr key={tx.id} className={`${i < transactions.length - 1 ? "border-b border-slate-50" : ""} hover:bg-slate-50 transition-colors`}>
-                      <td className="px-4 py-3 text-xs font-mono text-slate-500">{String(tx.id).slice(0, 8)}</td>
-                      <td className="px-4 py-3 text-xs text-slate-600">{tx.date}</td>
+                    <tr key={tx.id} className={`${i < transactions.length - 1 ? "border-b border-border" : ""} hover:bg-surface-elevated transition-colors`}>
+                      <td className="px-4 py-3 text-xs font-mono text-foreground-muted">{String(tx.id).slice(0, 8)}</td>
+                      <td className="px-4 py-3 text-xs text-foreground-muted">{tx.date}</td>
                       <td className="px-4 py-3">
-                        <Badge
-                          color={tx.type === "revenue" ? "#10B981" : "#EF4444"}
-                          bg={tx.type === "revenue" ? "#f0fdf4" : "#fef2f2"}
-                        >
-                          {tx.type}
+                        <Badge tone={(TX_TYPE_CONFIG[tx.type] ?? TX_TYPE_CONFIG.revenue).tone}>
+                          {(TX_TYPE_CONFIG[tx.type] ?? TX_TYPE_CONFIG.revenue).label}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-600">{tx.category}</td>
-                      <td className="px-4 py-3 text-xs text-slate-700 max-w-[200px] truncate">{tx.description}</td>
-                      <td className={`px-4 py-3 text-xs font-semibold ${tx.type === "revenue" ? "text-green-700" : "text-red-600"}`}>
+                      <td className="px-4 py-3 text-xs text-foreground-muted">{tx.category}</td>
+                      <td className="px-4 py-3 text-xs text-foreground max-w-[200px] truncate">{tx.description}</td>
+                      <td className={`px-4 py-3 text-xs font-semibold ${tx.type === "revenue" ? "text-success" : "text-error"}`}>
                         {tx.type === "expense" ? "-" : "+"}{formatCurrency(tx.amount)}
                       </td>
                       <td className="px-4 py-3">
-                        <Badge
-                          color={tx.status === "reconciled" ? "#10B981" : "#F59E0B"}
-                          bg={tx.status === "reconciled" ? "#f0fdf4" : "#fffbeb"}
-                        >
-                          {tx.status}
+                        <Badge tone={(TX_STATUS_CONFIG[tx.status] ?? TX_STATUS_CONFIG.pending).tone}>
+                          {(TX_STATUS_CONFIG[tx.status] ?? TX_STATUS_CONFIG.pending).label}
                         </Badge>
                       </td>
                     </tr>
@@ -194,7 +188,7 @@ export default function AccountingPage() {
                 )}
               </tbody>
             </table>
-            <div className="px-4 py-3 border-t border-slate-100">
+            <div className="px-4 py-3 border-t border-border">
               <Pagination
                 page={page}
                 totalPages={txData?.totalPages ?? 1}

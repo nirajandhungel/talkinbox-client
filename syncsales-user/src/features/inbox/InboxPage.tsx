@@ -8,9 +8,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { inboxApi, customersApi, ordersApi } from "@/api";
-import { QUERY_KEYS, PLATFORM_CONFIG } from "@/constants";
+import { QUERY_KEYS, PLATFORM_CONFIG, ORDER_STATUS_CONFIG } from "@/constants";
 import { cn, formatCurrency } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
+import { Badge, StatusBadge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/feedback/EmptyState";
@@ -62,57 +62,57 @@ function ContextPanel({
   };
 
   return (
-    <div className="w-72 shrink-0 flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-card hidden lg:flex">
+    <div className="w-72 shrink-0 flex-col bg-surface rounded-xl border border-border overflow-hidden shadow-card hidden lg:flex">
       {/* Customer Info */}
-      <div className="p-4 border-b border-slate-100">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center gap-3 mb-3">
           <Avatar initials={conversation.avatar} size="md" />
           <div className="min-w-0">
-            <p className="text-sm font-bold text-slate-800 truncate">{conversation.name}</p>
-            <Badge color={pfCfg.color} bg={pfCfg.bg}>{pfCfg.label}</Badge>
+            <p className="text-sm font-bold text-foreground truncate">{conversation.name}</p>
+            <Badge color={pfCfg.color}>{pfCfg.label}</Badge>
           </div>
         </div>
 
         {customer ? (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs text-slate-600">
-              <Mail size={11} className="text-slate-400 shrink-0" />
+            <div className="flex items-center gap-2 text-xs text-foreground-muted">
+              <Mail size={11} className="text-foreground-muted shrink-0" />
               <span className="truncate">{customer.email}</span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-600">
-              <Phone size={11} className="text-slate-400 shrink-0" />
+            <div className="flex items-center gap-2 text-xs text-foreground-muted">
+              <Phone size={11} className="text-foreground-muted shrink-0" />
               <span>{customer.phone}</span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-600">
-              <MapPin size={11} className="text-slate-400 shrink-0" />
+            <div className="flex items-center gap-2 text-xs text-foreground-muted">
+              <MapPin size={11} className="text-foreground-muted shrink-0" />
               <span className="truncate">{customer.address}</span>
             </div>
           </div>
         ) : (
-          <p className="text-[10px] text-slate-400 italic">Customer info unavailable</p>
+          <p className="text-[10px] text-foreground-muted italic">Customer info unavailable</p>
         )}
       </div>
 
       {/* Quick Stats */}
       {customer && (
-        <div className="grid grid-cols-3 gap-2 p-3 border-b border-slate-100">
+        <div className="grid grid-cols-3 gap-2 p-3 border-b border-border">
           <div className="text-center">
-            <p className="text-sm font-bold text-primary-600 font-mono">{customer.totalOrders}</p>
-            <p className="text-[9px] text-slate-400">Orders</p>
+            <p className="text-sm font-bold text-primary font-mono">{customer.totalOrders}</p>
+            <p className="text-[9px] text-foreground-muted">Orders</p>
           </div>
           <div className="text-center">
-            <p className="text-sm font-bold text-slate-800 font-mono">{formatCurrency(customer.totalSpent)}</p>
-            <p className="text-[9px] text-slate-400">Spent</p>
+            <p className="text-sm font-bold text-foreground font-mono">{formatCurrency(customer.totalSpent)}</p>
+            <p className="text-[9px] text-foreground-muted">Spent</p>
           </div>
           <div className="text-center">
-            <p className="text-sm font-bold text-slate-800">{customer.tier}</p>
-            <p className="text-[9px] text-slate-400">Tier</p>
+            <p className="text-sm font-bold text-foreground">{customer.tier}</p>
+            <p className="text-[9px] text-foreground-muted">Tier</p>
           </div>
         </div>
       )}
 
       {/* Contact Actions */}
-      <div className="p-3 border-b border-slate-100 grid grid-cols-3 gap-1.5">
+      <div className="p-3 border-b border-border grid grid-cols-3 gap-1.5">
         <Button
           variant="outline"
           size="xs"
@@ -145,7 +145,7 @@ function ContextPanel({
       {/* Recent Orders */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-3">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
+          <p className="text-[10px] font-semibold text-foreground-muted uppercase tracking-wider mb-2">
             Recent Orders
           </p>
           {customerOrders.length > 0 ? (
@@ -154,28 +154,17 @@ function ContextPanel({
                 <button
                   key={order.id}
                   onClick={() => navigate(`/orders/${order.id.replace("#", "")}`)}
-                  className="w-full text-left p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="w-full text-left p-2 rounded-lg hover:bg-surface-elevated transition-colors"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-primary-600 font-mono">{order.id}</span>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium"
-                      style={{
-                        color: order.status === "delivered" ? "#10B981" :
-                               order.status === "pending" ? "#F59E0B" :
-                               order.status === "cancelled" ? "#EF4444" : "#3B82F6",
-                        backgroundColor: order.status === "delivered" ? "#f0fdf4" :
-                                          order.status === "pending" ? "#fffbeb" :
-                                          order.status === "cancelled" ? "#fef2f2" : "#eff6ff",
-                      }}
-                    >
-                      {order.status}
-                    </span>
+                    <span className="text-[10px] font-bold text-primary font-mono">{order.id}</span>
+                    <StatusBadge config={ORDER_STATUS_CONFIG[order.status as keyof typeof ORDER_STATUS_CONFIG] ?? ORDER_STATUS_CONFIG.confirmed} />
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-[10px] text-slate-500 truncate">
+                    <span className="text-[10px] text-foreground-muted truncate">
                       {order.items[0]?.name}{order.items.length > 1 ? ` +${order.items.length - 1}` : ""}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-700 font-mono">
+                    <span className="text-[10px] font-bold text-foreground font-mono">
                       {formatCurrency(order.total)}
                     </span>
                   </div>
@@ -183,7 +172,7 @@ function ContextPanel({
               ))}
             </div>
           ) : (
-            <div className="text-center py-4 text-slate-400">
+            <div className="text-center py-4 text-foreground-muted">
               <ShoppingBag size={18} className="mx-auto mb-1" />
               <p className="text-[10px]">No orders yet</p>
             </div>
@@ -191,7 +180,7 @@ function ContextPanel({
         </div>
 
         {/* Quick Order from Chat */}
-        <div className="p-3 border-t border-slate-100">
+        <div className="p-3 border-t border-border">
           <Button
             variant="outline"
             size="xs"
@@ -251,13 +240,13 @@ export default function InboxPage() {
   // Fetch customer details for context panel
   const { data: allCustomers } = useQuery({
     queryKey: [...QUERY_KEYS.customers, "all-for-inbox"],
-    queryFn: () => customersApi.getAll({ page: 1, pageSize: 1000 }),
+    queryFn: () => customersApi.getAll({ page: 1, pageSize: 100 }),
   });
 
   // Fetch orders for context panel
   const { data: allOrders } = useQuery({
     queryKey: [...QUERY_KEYS.orders, "all-for-inbox"],
-    queryFn: () => ordersApi.getAll({ page: 1, pageSize: 1000 }),
+    queryFn: () => ordersApi.getAll({ page: 1, pageSize: 100 }),
   });
 
   const sendMutation = useMutation({
@@ -323,26 +312,26 @@ export default function InboxPage() {
     <div className="flex h-[calc(100vh-120px)] gap-3 max-w-[1400px]">
       {/* ─── Conversation List (Left Panel) ──────────── */}
       <div className={cn(
-        "w-full md:w-72 shrink-0 flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-card",
+        "w-full md:w-72 shrink-0 flex flex-col bg-surface rounded-xl border border-border overflow-hidden shadow-card",
         activeConv && "hidden md:flex"
       )}>
         {/* Header */}
-        <div className="p-3 border-b border-slate-100">
+        <div className="p-3 border-b border-border">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm font-bold text-slate-800">Inbox</h2>
-            <span className="text-[10px] font-bold bg-primary-50 text-primary-600 px-1.5 py-0.5 rounded-full">
+            <h2 className="text-sm font-bold text-foreground">Inbox</h2>
+            <span className="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
               {allConversations.filter((c) => c.unread > 0).length} unread
             </span>
           </div>
 
           {/* Search */}
           <div className="relative mb-2">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground-muted" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search conversations..."
-              className="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg bg-surface-elevated border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
 
@@ -357,8 +346,8 @@ export default function InboxPage() {
                   className={cn(
                     "flex-1 px-1 py-1 text-[9px] font-medium rounded-md transition-colors",
                     statusFilter === opt.key
-                      ? "bg-primary-600 text-white"
-                      : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      ? "bg-primary text-primary-foreground text-primary-foreground"
+                      : "bg-surface-elevated text-foreground-muted hover:bg-surface-elevated"
                   )}
                 >
                   {opt.label} {count > 0 && <span className="ml-0.5">({count})</span>}
@@ -371,7 +360,7 @@ export default function InboxPage() {
         {/* Conversation List */}
         <div className="flex-1 overflow-y-auto scrollbar-thin">
           {filteredConversations.length === 0 ? (
-            <div className="p-4 text-center text-slate-400">
+            <div className="p-4 text-center text-foreground-muted">
               <MessageSquare size={20} className="mx-auto mb-1" />
               <p className="text-xs">No conversations</p>
             </div>
@@ -384,37 +373,37 @@ export default function InboxPage() {
                   key={conv.id}
                   onClick={() => setActiveConv(conv)}
                   className={cn(
-                    "w-full flex items-center gap-2.5 p-3 text-left transition-colors border-b border-slate-50",
-                    isActive ? "bg-primary-50" : "hover:bg-slate-50"
+                    "w-full flex items-center gap-2.5 p-3 text-left transition-colors border-b border-border",
+                    isActive ? "bg-primary/10" : "hover:bg-surface-elevated"
                   )}
                 >
                   <div className="relative shrink-0">
                     <Avatar initials={conv.avatar} size="sm" />
                     <div
-                      className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white flex items-center justify-center"
+                      className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-surface flex items-center justify-center"
                       style={{ background: platformCfg.color }}
                     />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex justify-between items-start">
-                      <p className={cn("text-xs font-semibold text-slate-800 truncate", conv.unread > 0 && "text-slate-900")}>{conv.name}</p>
-                      <span className="text-[10px] text-slate-400 shrink-0 ml-1">{conv.time}</span>
+                      <p className={cn("text-xs font-semibold text-foreground truncate", conv.unread > 0 && "text-foreground")}>{conv.name}</p>
+                      <span className="text-[10px] text-foreground-muted shrink-0 ml-1">{conv.time}</span>
                     </div>
-                    <p className="text-[10px] text-slate-500 truncate mt-0.5">{conv.lastMessage}</p>
+                    <p className="text-[10px] text-foreground-muted truncate mt-0.5">{conv.lastMessage}</p>
                     <div className="flex items-center gap-1.5 mt-1">
                       {conv.aiHandled && (
-                        <span className="text-[9px] bg-primary-50 text-primary-600 px-1 py-0.5 rounded font-medium inline-flex items-center gap-0.5">
+                        <span className="text-[9px] bg-primary/10 text-primary px-1 py-0.5 rounded font-medium inline-flex items-center gap-0.5">
                           <Bot size={8} /> AI
                         </span>
                       )}
                       {conv.status === "resolved" && (
-                        <span className="text-[9px] bg-green-50 text-green-600 px-1 py-0.5 rounded font-medium">
+                        <span className="text-[9px] bg-success/10 text-success px-1 py-0.5 rounded font-medium">
                           ✓ Resolved
                         </span>
                       )}
                       {conv.unread > 0 && (
                         <span
-                          className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-white ml-auto"
+                          className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-primary-foreground ml-auto"
                           style={{ background: platformCfg.color }}
                         >
                           {conv.unread}
@@ -431,28 +420,28 @@ export default function InboxPage() {
 
       {/* ─── Chat Area (Center Panel) ────────────────── */}
       {activeConv ? (
-        <div className="flex-1 flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-card min-w-0">
+        <div className="flex-1 flex flex-col bg-surface rounded-xl border border-border overflow-hidden shadow-card min-w-0">
           {/* Header */}
-          <div className="flex items-center gap-3 px-3 sm:px-4 py-3 border-b border-slate-100 shrink-0">
+          <div className="flex items-center gap-3 px-3 sm:px-4 py-3 border-b border-border shrink-0">
             {/* Back button — mobile only */}
             <button
               onClick={() => setActiveConv(null)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors md:hidden shrink-0"
+              className="p-1.5 rounded-lg text-foreground-muted hover:text-foreground-muted hover:bg-surface-elevated transition-colors md:hidden shrink-0"
             >
               <ArrowLeft size={16} />
             </button>
             <Avatar initials={activeConv.avatar} size="sm" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-slate-800">{activeConv.name}</p>
+              <p className="text-sm font-semibold text-foreground">{activeConv.name}</p>
               <div className="flex items-center gap-2">
                 <Badge
                   color={PLATFORM_CONFIG[activeConv.platform].color}
-                  bg={PLATFORM_CONFIG[activeConv.platform].bg}
+                 
                 >
                   {PLATFORM_CONFIG[activeConv.platform].label}
                 </Badge>
                 {activeConv.aiHandled && (
-                  <span className="text-[10px] text-primary-600 font-medium flex items-center gap-0.5">
+                  <span className="text-[10px] text-primary font-medium flex items-center gap-0.5">
                     <Bot size={10} /> AI handling
                   </span>
                 )}
@@ -509,12 +498,12 @@ export default function InboxPage() {
                   {msg.sender === "customer" ? (
                     <Avatar initials={activeConv.avatar} size="xs" />
                   ) : msg.sender === "ai" ? (
-                    <div className="w-6 h-6 rounded-full bg-primary-50 flex items-center justify-center">
-                      <Bot size={11} className="text-primary-600" />
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Bot size={11} className="text-primary" />
                     </div>
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center">
-                      <User size={11} className="text-slate-500" />
+                    <div className="w-6 h-6 rounded-full bg-surface-elevated flex items-center justify-center">
+                      <User size={11} className="text-foreground-muted" />
                     </div>
                   )}
                 </div>
@@ -522,17 +511,17 @@ export default function InboxPage() {
                   className={cn(
                     "max-w-[70%] rounded-2xl px-3.5 py-2.5 text-xs",
                     msg.sender === "customer"
-                      ? "bg-slate-100 text-slate-800 rounded-tl-sm"
+                      ? "bg-surface-elevated text-foreground rounded-tl-sm"
                       : msg.sender === "ai"
-                      ? "bg-primary-600 text-white rounded-tr-sm"
-                      : "bg-blue-600 text-white rounded-tr-sm"
+                      ? "bg-primary text-primary-foreground text-primary-foreground rounded-tr-sm"
+                      : "bg-primary text-primary-foreground rounded-tr-sm"
                   )}
                 >
                   <p className="leading-relaxed">{msg.text}</p>
                   <p className={cn(
                     "text-[10px] mt-1",
-                    msg.sender === "customer" ? "text-slate-400" :
-                    msg.sender === "ai" ? "text-primary-200" : "text-blue-200"
+                    msg.sender === "customer" ? "text-foreground-muted" :
+                    msg.sender === "ai" ? "text-primary-foreground/70" : "text-primary-foreground/70"
                   )}>
                     {msg.time}
                     {msg.sender === "ai" && " · AI"}
@@ -545,19 +534,19 @@ export default function InboxPage() {
           </div>
 
           {/* Input */}
-          <div className="p-3 border-t border-slate-100 shrink-0">
+          <div className="p-3 border-t border-border shrink-0">
             <div className="flex gap-2">
               <input
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
                 placeholder="Type a message..."
-                className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="flex-1 px-3 py-2 text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
               <button
                 onClick={handleSend}
                 disabled={!messageInput.trim()}
-                className="px-3 py-2 rounded-xl bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 transition-colors"
+                className="px-3 py-2 rounded-xl bg-primary text-primary-foreground text-primary-foreground hover:bg-primary-hover text-primary-foreground disabled:opacity-50 transition-colors"
               >
                 <Send size={14} />
               </button>
@@ -565,7 +554,7 @@ export default function InboxPage() {
           </div>
         </div>
       ) : (
-        <div className="flex-1 bg-white rounded-xl border border-slate-100 items-center justify-center shadow-card hidden md:flex">
+        <div className="flex-1 bg-surface rounded-xl border border-border items-center justify-center shadow-card hidden md:flex">
           <EmptyState
             icon={<MessageSquare size={28} />}
             title="Select a conversation"

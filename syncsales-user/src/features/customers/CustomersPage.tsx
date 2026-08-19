@@ -9,6 +9,7 @@ import {
 import { customersApi } from "@/api";
 import { QUERY_KEYS, PLATFORM_CONFIG, TIER_CONFIG } from "@/constants";
 import { formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useSearch, usePagination } from "@/hooks";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -23,12 +24,12 @@ import type { Customer } from "@/types";
 
 // ─── Tier KPI Cards ──────────────────────────────────────────────
 
-const TIER_KPI = [
-  { key: "Platinum", icon: "💎", color: "#6D28D9", bg: "#f5f3ff" },
-  { key: "Gold", icon: "🥇", color: "#B45309", bg: "#fffbeb" },
-  { key: "Silver", icon: "🥈", color: "#475569", bg: "#f1f5f9" },
-  { key: "Bronze", icon: "🥉", color: "#92400E", bg: "#fef3c7" },
-] as const;
+const TIER_KPI: { key: Customer["tier"]; icon: string; tone: "primary" | "warning" | "muted" }[] = [
+  { key: "Platinum", icon: "💎", tone: "primary" },
+  { key: "Gold", icon: "🥇", tone: "warning" },
+  { key: "Silver", icon: "🥈", tone: "muted" },
+  { key: "Bronze", icon: "🥉", tone: "warning" },
+];
 
 // ─── Customer Detail Drawer ──────────────────────────────────────
 
@@ -74,15 +75,15 @@ function CustomerDetailDrawer({
         animate={{ x: 0 }}
         exit={{ x: 400 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="w-full max-w-md bg-white shadow-2xl overflow-y-auto"
+        className="w-full max-w-md bg-surface shadow-2xl overflow-y-auto"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="sticky top-0 bg-surface z-10 px-5 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ArrowLeft size={15} className="text-slate-400" />
-            <h3 className="text-sm font-bold text-slate-800">Customer Details</h3>
+            <ArrowLeft size={15} className="text-foreground-muted" />
+            <h3 className="text-sm font-bold text-foreground">Customer Details</h3>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-surface-elevated text-foreground-muted transition-colors">
             <X size={15} />
           </button>
         </div>
@@ -92,10 +93,10 @@ function CustomerDetailDrawer({
           <div className="flex items-center gap-4">
             <Avatar name={customer.name} size="lg" />
             <div>
-              <h2 className="text-lg font-bold text-slate-800">{customer.name}</h2>
+              <h2 className="text-lg font-bold text-foreground">{customer.name}</h2>
               <div className="flex items-center gap-2 mt-1">
-                <Badge color={pfCfg.color} bg={pfCfg.bg}>{pfCfg.label}</Badge>
-                <Badge color={tierCfg.color} bg={tierCfg.bg}>
+                <Badge color={pfCfg.color}>{pfCfg.label}</Badge>
+                <Badge tone={tierCfg.tone}>
                   {customer.tier === "Platinum" ? "💎" : customer.tier === "Gold" ? "🥇" : "⭐"} {customer.tier}
                 </Badge>
               </div>
@@ -104,20 +105,20 @@ function CustomerDetailDrawer({
 
           {/* Contact Info */}
           <div className="mt-5 space-y-3">
-            <div className="flex items-center gap-3 text-sm text-slate-600">
-              <Mail size={14} className="text-slate-400" />
+            <div className="flex items-center gap-3 text-sm text-foreground-muted">
+              <Mail size={14} className="text-foreground-muted" />
               <span>{customer.email}</span>
             </div>
-            <div className="flex items-center gap-3 text-sm text-slate-600">
-              <Phone size={14} className="text-slate-400" />
+            <div className="flex items-center gap-3 text-sm text-foreground-muted">
+              <Phone size={14} className="text-foreground-muted" />
               <span>{customer.phone}</span>
             </div>
-            <div className="flex items-center gap-3 text-sm text-slate-600">
-              <MapPin size={14} className="text-slate-400" />
+            <div className="flex items-center gap-3 text-sm text-foreground-muted">
+              <MapPin size={14} className="text-foreground-muted" />
               <span>{customer.address}</span>
             </div>
-            <div className="flex items-center gap-3 text-sm text-slate-600">
-              <Calendar size={14} className="text-slate-400" />
+            <div className="flex items-center gap-3 text-sm text-foreground-muted">
+              <Calendar size={14} className="text-foreground-muted" />
               <span>Joined {customer.joinDate}</span>
             </div>
           </div>
@@ -139,18 +140,18 @@ function CustomerDetailDrawer({
         {/* Stats Cards */}
         <div className="px-5 grid grid-cols-3 gap-3">
           <Card padding="sm" className="text-center">
-            <p className="text-lg font-bold text-primary-600 font-mono">{customer.totalOrders}</p>
-            <p className="text-[10px] text-slate-500 mt-0.5">Orders</p>
+            <p className="text-lg font-bold text-primary font-mono">{customer.totalOrders}</p>
+            <p className="text-[10px] text-foreground-muted mt-0.5">Orders</p>
           </Card>
           <Card padding="sm" className="text-center">
-            <p className="text-lg font-bold text-slate-800 font-mono">{formatCurrency(customer.totalSpent)}</p>
-            <p className="text-[10px] text-slate-500 mt-0.5">Total Spent</p>
+            <p className="text-lg font-bold text-foreground font-mono">{formatCurrency(customer.totalSpent)}</p>
+            <p className="text-[10px] text-foreground-muted mt-0.5">Total Spent</p>
           </Card>
           <Card padding="sm" className="text-center">
-            <p className="text-lg font-bold text-slate-800 font-mono">
+            <p className="text-lg font-bold text-foreground font-mono">
               {customer.totalOrders > 0 ? formatCurrency(Math.round(customer.totalSpent / customer.totalOrders)) : "—"}
             </p>
-            <p className="text-[10px] text-slate-500 mt-0.5">Avg. Order</p>
+            <p className="text-[10px] text-foreground-muted mt-0.5">Avg. Order</p>
           </Card>
         </div>
 
@@ -159,16 +160,15 @@ function CustomerDetailDrawer({
           <Card>
             <CardHeader title="Lifetime Value" subtitle={`${customer.tier} tier customer`} />
             <div className="mt-2">
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-surface-elevated rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min((customer.totalSpent / 50000) * 100, 100)}%` }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className="h-full rounded-full"
-                  style={{ backgroundColor: tierCfg.color }}
+                  className="h-full rounded-full bg-primary"
                 />
               </div>
-              <div className="flex justify-between mt-2 text-[10px] text-slate-400">
+              <div className="flex justify-between mt-2 text-[10px] text-foreground-muted">
                 <span>NPR 0</span>
                 <span>NPR 50,000</span>
               </div>
@@ -181,7 +181,7 @@ function CustomerDetailDrawer({
           <div className="px-5 mt-4">
             <Card>
               <CardHeader title="Notes" />
-              <p className="text-sm text-slate-600">{customer.notes}</p>
+              <p className="text-sm text-foreground-muted">{customer.notes}</p>
             </Card>
           </div>
         )}
@@ -190,30 +190,30 @@ function CustomerDetailDrawer({
         <div className="px-5 mt-4 pb-6 space-y-2">
           <button
             onClick={() => info("Order history — coming soon")}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-elevated transition-colors text-left group"
           >
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-              <ShoppingBag size={14} className="text-blue-600" />
+            <div className="w-8 h-8 rounded-lg bg-primary-soft flex items-center justify-center">
+              <ShoppingBag size={14} className="text-primary" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-700">View Order History</p>
-              <p className="text-xs text-slate-400">{customer.totalOrders} orders total</p>
+              <p className="text-sm font-medium text-foreground">View Order History</p>
+              <p className="text-xs text-foreground-muted">{customer.totalOrders} orders total</p>
             </div>
-            <ChevronRight size={14} className="text-slate-300 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight size={14} className="text-foreground-muted group-hover:translate-x-0.5 transition-transform" />
           </button>
 
           <button
             onClick={() => info("Spending analytics — coming soon")}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-elevated transition-colors text-left group"
           >
-            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-              <TrendingUp size={14} className="text-green-600" />
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+              <TrendingUp size={14} className="text-success" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-700">Spending Analytics</p>
-              <p className="text-xs text-slate-400">Purchase trends & insights</p>
+              <p className="text-sm font-medium text-foreground">Spending Analytics</p>
+              <p className="text-xs text-foreground-muted">Purchase trends & insights</p>
             </div>
-            <ChevronRight size={14} className="text-slate-300 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight size={14} className="text-foreground-muted group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
       </motion.div>
@@ -238,7 +238,7 @@ export default function CustomersPage() {
   // Get all customers for tier counts
   const { data: allData } = useQuery({
     queryKey: [...QUERY_KEYS.customers, "all"],
-    queryFn: () => customersApi.getAll({ page: 1, pageSize: 1000 }),
+    queryFn: () => customersApi.getAll({ page: 1, pageSize: 100 }),
   });
 
   const allCustomers = allData?.data ?? [];
@@ -266,8 +266,8 @@ export default function CustomersPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-800">Customers</h2>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+          <h2 className="text-base sm:text-lg font-bold text-foreground">Customers</h2>
+          <p className="text-[11px] sm:text-xs text-foreground-muted mt-0.5">
             {data?.total ?? 0} total customers · {formatCurrency(totalLTV)} lifetime value
           </p>
         </div>
@@ -287,16 +287,23 @@ export default function CustomersPage() {
               <Card
                 hoverable
                 onClick={() => { setTierFilter(isActive ? "all" : tier.key); setPage(1); }}
-                className={`transition-all ${isActive ? "ring-2 ring-offset-1" : ""}`}
-                style={isActive ? { borderColor: tier.color, boxShadow: `0 0 0 2px ${tier.color}33` } : {}}
+                className={cn(
+                  "transition-all",
+                  isActive && "ring-2 ring-primary ring-offset-1 border-primary/30",
+                )}
                 padding="sm"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-slate-500">{tier.key}</p>
-                    <p className="text-2xl font-bold text-slate-800 font-mono mt-1">{count}</p>
+                    <p className="text-xs font-medium text-foreground-muted">{tier.key}</p>
+                    <p className="text-2xl font-bold text-foreground font-mono mt-1">{count}</p>
                   </div>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: tier.bg }}>
+                  <div className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center text-lg",
+                    tier.tone === "primary" && "bg-primary-soft",
+                    tier.tone === "warning" && "bg-warning/10",
+                    tier.tone === "muted" && "bg-surface-elevated",
+                  )}>
                     {tier.icon}
                   </div>
                 </div>
@@ -327,9 +334,9 @@ export default function CustomersPage() {
         <Card padding="none">
           <table className="w-full mobile-card-table">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
+              <tr className="border-b border-border bg-surface-elevated/50">
                 {["Customer", "Contact", "Platform", "Orders", "Total Spent", "Tier", "Last Order", ""].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{h}</th>
+                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-foreground-muted uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -341,39 +348,39 @@ export default function CustomersPage() {
                   <tr
                     key={c.id}
                     onClick={() => setSelectedCustomer(c)}
-                    className={`${i < filteredCustomers.length - 1 ? "md:border-b md:border-slate-50" : ""} hover:bg-slate-50/80 transition-colors cursor-pointer group`}
+                    className={`${i < filteredCustomers.length - 1 ? "md:border-b md:border-border" : ""} hover:bg-surface-elevated/80 transition-colors cursor-pointer group`}
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <Avatar initials={c.avatar} size="sm" />
                         <div>
-                          <p className="text-xs font-semibold text-slate-800 group-hover:text-primary-600 transition-colors">{c.name}</p>
-                          <p className="text-[10px] text-slate-400">Joined {c.joinDate}</p>
+                          <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">{c.name}</p>
+                          <p className="text-[10px] text-foreground-muted">Joined {c.joinDate}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
-                      <p className="text-xs text-slate-700">{c.email}</p>
-                      <p className="text-[10px] text-slate-400">{c.phone}</p>
+                      <p className="text-xs text-foreground">{c.email}</p>
+                      <p className="text-[10px] text-foreground-muted">{c.phone}</p>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
-                      <Badge color={pfCfg.color} bg={pfCfg.bg}>{pfCfg.label}</Badge>
+                      <Badge color={pfCfg.color}>{pfCfg.label}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-xs font-semibold text-slate-700">{c.totalOrders}</td>
-                    <td className="px-4 py-3 text-xs font-bold text-slate-800 font-mono">{formatCurrency(c.totalSpent)}</td>
+                    <td className="px-4 py-3 text-xs font-semibold text-foreground">{c.totalOrders}</td>
+                    <td className="px-4 py-3 text-xs font-bold text-foreground font-mono">{formatCurrency(c.totalSpent)}</td>
                     <td className="px-4 py-3">
-                      <Badge color={cTierCfg.color} bg={cTierCfg.bg}>{c.tier}</Badge>
+                      <Badge tone={cTierCfg.tone}>{c.tier}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-500 hidden lg:table-cell">{c.lastOrder}</td>
+                    <td className="px-4 py-3 text-xs text-foreground-muted hidden lg:table-cell">{c.lastOrder}</td>
                     <td className="px-4 py-3">
-                      <ChevronRight size={14} className="text-slate-300 group-hover:text-primary-500 group-hover:translate-x-0.5 transition-all" />
+                      <ChevronRight size={14} className="text-foreground-muted group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
-          <div className="px-4 py-3 border-t border-slate-100">
+          <div className="px-4 py-3 border-t border-border">
             <Pagination page={page} totalPages={data?.totalPages ?? 1} total={data?.total ?? 0} pageSize={pageSize} onPageChange={setPage} onPageSizeChange={(size) => { setPageSize(size); setPage(1); }} />
           </div>
         </Card>
