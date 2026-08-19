@@ -8,6 +8,7 @@ import {
 import { productsApi } from "@/api";
 import { QUERY_KEYS, STOCK_STATUS_CONFIG } from "@/constants";
 import { formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useSearch, usePagination, useSelectedRows } from "@/hooks";
 import { Card } from "@/components/ui/Card";
 import { Input, Select } from "@/components/ui/Input";
@@ -67,8 +68,8 @@ export default function InventoryPage() {
 
   // Fetch all products (for client-side filtering/sorting like V2)
   const { data, isLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.products, { page: 1, pageSize: 1000, search: debouncedSearch }],
-    queryFn: () => productsApi.getAll({ page: 1, pageSize: 1000, search: debouncedSearch }),
+    queryKey: [...QUERY_KEYS.products, { page: 1, pageSize: 100, search: debouncedSearch }],
+    queryFn: () => productsApi.getAll({ page: 1, pageSize: 100, search: debouncedSearch }),
   });
 
   const deleteMutation = useMutation({
@@ -181,8 +182,8 @@ export default function InventoryPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-800">Inventory</h2>
-          <p className="text-[11px] sm:text-xs text-slate-500">
+          <h2 className="text-base sm:text-lg font-bold text-foreground">Inventory</h2>
+          <p className="text-[11px] sm:text-xs text-foreground-muted">
             {stockSummary.total} products · {formatCurrency(stockSummary.totalValue)} total value
           </p>
         </div>
@@ -206,10 +207,10 @@ export default function InventoryPage() {
       {/* Stock KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total Products", value: stockSummary.total, icon: "📦", color: "#006D5B", bg: "#f0fdf4" },
-          { label: "Low Stock", value: stockSummary.low, icon: "⚠️", color: "#F59E0B", bg: "#fffbeb", filter: "low" },
-          { label: "Critical", value: stockSummary.critical, icon: "🔴", color: "#EF4444", bg: "#fef2f2", filter: "critical" },
-          { label: "Out of Stock", value: stockSummary.out, icon: "⛔", color: "#6B7280", bg: "#f9fafb", filter: "out" },
+          { label: "Total Products", value: stockSummary.total, icon: "📦", tone: "success" as const },
+          { label: "Low Stock", value: stockSummary.low, icon: "⚠️", tone: "warning" as const, filter: "low" },
+          { label: "Critical", value: stockSummary.critical, icon: "🔴", tone: "error" as const, filter: "critical" },
+          { label: "Out of Stock", value: stockSummary.out, icon: "⛔", tone: "muted" as const, filter: "out" },
         ].map((kpi) => (
           <motion.div key={kpi.label} whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
             <Card
@@ -222,20 +223,23 @@ export default function InventoryPage() {
               }}
               className={`transition-all ${
                 "filter" in kpi && statusFilter === kpi.filter
-                  ? "ring-2 ring-primary-500 ring-offset-1 border-primary-200"
+                  ? "ring-2 ring-primary ring-offset-1 border-primary/30"
                   : ""
               }`}
               padding="sm"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{kpi.label}</p>
-                  <p className="text-2xl font-bold text-slate-800 font-mono mt-1">{kpi.value}</p>
+                  <p className="text-[10px] font-medium text-foreground-muted uppercase tracking-wider">{kpi.label}</p>
+                  <p className="text-2xl font-bold text-foreground font-mono mt-1">{kpi.value}</p>
                 </div>
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-base"
-                  style={{ backgroundColor: kpi.bg }}
-                >
+                <div className={cn(
+                  "w-9 h-9 rounded-xl flex items-center justify-center text-base",
+                  kpi.tone === "success" && "bg-success/10",
+                  kpi.tone === "warning" && "bg-warning/10",
+                  kpi.tone === "error" && "bg-error/10",
+                  kpi.tone === "muted" && "bg-surface-elevated",
+                )}>
                   {kpi.icon}
                 </div>
               </div>
@@ -251,9 +255,9 @@ export default function InventoryPage() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="flex items-center gap-3 bg-primary-50 border border-primary-100 rounded-xl px-4 py-2.5"
+            className="flex items-center gap-3 bg-primary/10 border border-primary/20 rounded-xl px-4 py-2.5"
           >
-            <span className="text-xs font-semibold text-primary-700">{selectedCount} selected</span>
+            <span className="text-xs font-semibold text-primary-hover">{selectedCount} selected</span>
             <div className="flex-1" />
             <Button variant="ghost" size="xs" onClick={clear}>Deselect all</Button>
             <Button variant="danger" size="xs" icon={<Trash2 size={12} />} onClick={handleDeleteSelected}>
@@ -285,16 +289,16 @@ export default function InventoryPage() {
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             containerClassName="w-full sm:w-36"
           />
-          <div className="hidden sm:flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+          <div className="hidden sm:flex items-center gap-1 bg-surface-elevated rounded-lg p-0.5">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded-md transition-colors ${viewMode === "grid" ? "bg-white shadow-sm text-primary-600" : "text-slate-400 hover:text-slate-600"}`}
+              className={`p-1.5 rounded-md transition-colors ${viewMode === "grid" ? "bg-surface shadow-sm text-primary" : "text-foreground-muted hover:text-foreground-muted"}`}
             >
               <Grid3X3 size={14} />
             </button>
             <button
               onClick={() => setViewMode("table")}
-              className={`p-1.5 rounded-md transition-colors ${viewMode === "table" ? "bg-white shadow-sm text-primary-600" : "text-slate-400 hover:text-slate-600"}`}
+              className={`p-1.5 rounded-md transition-colors ${viewMode === "table" ? "bg-surface shadow-sm text-primary" : "text-foreground-muted hover:text-foreground-muted"}`}
             >
               <List size={14} />
             </button>
@@ -337,17 +341,17 @@ export default function InventoryPage() {
                   >
                     <div className="p-4 pb-2 text-center">
                       <div className="text-4xl mb-2">{product.image}</div>
-                      <p className="text-xs font-semibold text-slate-800 truncate">{product.name}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">{product.sku}</p>
+                      <p className="text-xs font-semibold text-foreground truncate">{product.name}</p>
+                      <p className="text-[10px] text-foreground-muted font-mono">{product.sku}</p>
                     </div>
                     <div className="px-4 pb-3 flex items-center justify-between">
-                      <span className="text-sm font-bold text-primary-600 font-mono">
+                      <span className="text-sm font-bold text-primary font-mono">
                         {formatCurrency(product.price)}
                       </span>
-                      <span className="text-[10px] text-slate-500">{product.stock} left</span>
+                      <span className="text-[10px] text-foreground-muted">{product.stock} left</span>
                     </div>
                     <div className="px-4 pb-3">
-                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{
@@ -365,13 +369,13 @@ export default function InventoryPage() {
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={(e) => { e.stopPropagation(); handleEdit(product); }}
-                          className="p-1 rounded text-slate-400 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                          className="p-1 rounded text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
                         >
                           <Edit2 size={11} />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDelete(product); }}
-                          className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          className="p-1 rounded text-foreground-muted hover:text-error hover:bg-error/10 transition-colors"
                         >
                           <Trash2 size={11} />
                         </button>
@@ -397,7 +401,7 @@ export default function InventoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full mobile-card-table">
               <thead>
-                <tr className="border-b border-slate-100">
+                <tr className="border-b border-border">
                   <th className="px-4 py-3 w-10">
                     <input
                       type="checkbox"
@@ -419,7 +423,7 @@ export default function InventoryPage() {
                   ] as const).map(([label, sortKey]) => (
                     <th
                       key={label || "actions"}
-                      className={`px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider ${sortKey ? "cursor-pointer hover:text-slate-600 select-none" : ""}`}
+                      className={`px-4 py-3 text-left text-[10px] font-semibold text-foreground-muted uppercase tracking-wider ${sortKey ? "cursor-pointer hover:text-foreground-muted select-none" : ""}`}
                       onClick={() => sortKey && handleSort(sortKey as SortKey)}
                     >
                       <span className="inline-flex items-center gap-1">
@@ -440,7 +444,7 @@ export default function InventoryPage() {
                       <tr
                         key={product.id}
                         onClick={() => handleEdit(product)}
-                        className={`${i < paged.length - 1 ? "md:border-b md:border-slate-50" : ""} hover:bg-slate-50/80 transition-colors cursor-pointer group ${isSelected ? "bg-primary-50/50" : ""}`}
+                        className={`${i < paged.length - 1 ? "md:border-b md:border-border" : ""} hover:bg-surface-elevated/80 transition-colors cursor-pointer group ${isSelected ? "bg-primary/10" : ""}`}
                       >
                         <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                           <input
@@ -454,31 +458,31 @@ export default function InventoryPage() {
                           <div className="flex items-center gap-2.5">
                             <span className="text-xl">{product.image}</span>
                             <div>
-                              <p className="text-xs font-semibold text-slate-800">{product.name}</p>
-                              <p className="text-[10px] text-slate-400">{product.variants.join(", ")}</p>
+                              <p className="text-xs font-semibold text-foreground">{product.name}</p>
+                              <p className="text-[10px] text-foreground-muted">{product.variants.join(", ")}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-xs text-slate-500 font-mono hidden md:table-cell">{product.sku}</td>
-                        <td className="px-4 py-3 text-xs text-slate-600 hidden lg:table-cell">{product.category}</td>
-                        <td className="px-4 py-3 text-xs font-semibold text-primary-600 font-mono">
+                        <td className="px-4 py-3 text-xs text-foreground-muted font-mono hidden md:table-cell">{product.sku}</td>
+                        <td className="px-4 py-3 text-xs text-foreground-muted hidden lg:table-cell">{product.category}</td>
+                        <td className="px-4 py-3 text-xs font-semibold text-primary font-mono">
                           {formatCurrency(product.price)}
                         </td>
-                        <td className="px-4 py-3 text-xs text-slate-600 hidden lg:table-cell">{formatCurrency(product.cost)}</td>
+                        <td className="px-4 py-3 text-xs text-foreground-muted hidden lg:table-cell">{formatCurrency(product.cost)}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1">
                             {product.stock <= 5 && product.stock > 0 && (
-                              <AlertTriangle size={10} className="text-amber-500" />
+                              <AlertTriangle size={10} className="text-warning" />
                             )}
                             <span className={`text-xs font-bold font-mono ${
-                              product.stock === 0 ? "text-slate-400" :
-                              product.stock <= 5 ? "text-amber-600" : "text-slate-800"
+                              product.stock === 0 ? "text-foreground-muted" :
+                              product.stock <= 5 ? "text-warning" : "text-foreground"
                             }`}>
                               {product.stock}
                             </span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-xs text-slate-600 font-mono hidden md:table-cell">{product.sold}</td>
+                        <td className="px-4 py-3 text-xs text-foreground-muted font-mono hidden md:table-cell">{product.sold}</td>
                         <td className="px-4 py-3">
                           <StatusBadge config={statusCfg} />
                         </td>
@@ -486,13 +490,13 @@ export default function InventoryPage() {
                           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => handleEdit(product)}
-                              className="p-1.5 rounded-lg text-slate-300 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                              className="p-1.5 rounded-lg text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
                             >
                               <Edit2 size={13} />
                             </button>
                             <button
                               onClick={() => handleDelete(product)}
-                              className="p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                              className="p-1.5 rounded-lg text-foreground-muted hover:text-error hover:bg-error/10 transition-colors"
                             >
                               <Trash2 size={13} />
                             </button>
@@ -504,7 +508,7 @@ export default function InventoryPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t border-slate-100">
+          <div className="px-4 py-3 border-t border-border">
             <Pagination
               page={page}
               totalPages={totalPages}

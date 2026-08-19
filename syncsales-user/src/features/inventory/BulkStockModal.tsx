@@ -92,22 +92,22 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 8 }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-2xl shadow-card-lg w-full max-w-xl max-h-[80vh] flex flex-col"
+            className="bg-surface rounded-2xl shadow-card-lg w-full max-w-xl max-h-[80vh] flex flex-col"
           >
             {/* Header */}
-            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+            <div className="px-5 py-4 border-b border-border flex items-center justify-between shrink-0">
               <div>
-                <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                  <Package size={15} className="text-primary-600" />
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Package size={15} className="text-primary" />
                   Bulk Stock Update
                 </h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[11px] text-foreground-muted mt-0.5">
                   {step === 1 ? "Adjust stock quantities for multiple products" : "Review and confirm changes"}
                 </p>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-foreground-muted hover:text-foreground-muted hover:bg-surface-elevated transition-colors"
               >
                 <X size={15} />
               </button>
@@ -118,7 +118,7 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
               {step === 1 ? (
                 <div className="space-y-3">
                   {updates.length === 0 ? (
-                    <div className="text-center py-8 text-slate-400">
+                    <div className="text-center py-8 text-foreground-muted">
                       <Package size={28} className="mx-auto mb-2" />
                       <p className="text-sm font-medium">All products are well-stocked</p>
                       <p className="text-xs mt-1">No items need restocking right now</p>
@@ -129,12 +129,12 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
                       return (
                         <div
                           key={u.productId}
-                          className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100"
+                          className="flex items-center gap-3 p-3 rounded-xl bg-surface-elevated border border-border"
                         >
                           <span className="text-xl">{u.productImage}</span>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-slate-800 truncate">{u.productName}</p>
-                            <p className="text-[10px] text-slate-400">
+                            <p className="text-xs font-semibold text-foreground truncate">{u.productName}</p>
+                            <p className="text-[10px] text-foreground-muted">
                               Current: {u.currentStock} · Cost: {formatCurrency(u.cost)}/unit
                             </p>
                           </div>
@@ -142,7 +142,7 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
                             <button
                               type="button"
                               onClick={() => updateStock(u.productId, u.newStock - 5)}
-                              className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
+                              className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:bg-surface-elevated transition-colors"
                             >
                               <Minus size={12} />
                             </button>
@@ -150,25 +150,25 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
                               type="number"
                               value={u.newStock}
                               onChange={(e) => updateStock(u.productId, Number(e.target.value))}
-                              className="w-14 h-7 rounded-lg border border-slate-200 text-center text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                              className="w-14 h-7 rounded-lg border border-border text-center text-xs font-mono font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
                             />
                             <button
                               type="button"
                               onClick={() => updateStock(u.productId, u.newStock + 5)}
-                              className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
+                              className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:bg-surface-elevated transition-colors"
                             >
                               <Plus size={12} />
                             </button>
                           </div>
                           {change > 0 && (
-                            <span className="text-[10px] font-bold text-green-600 min-w-[40px] text-right">
+                            <span className="text-[10px] font-bold text-success min-w-[40px] text-right">
                               +{change}
                             </span>
                           )}
                           <button
                             type="button"
                             onClick={() => removeUpdate(u.productId)}
-                            className="p-1 text-slate-300 hover:text-red-500 transition-colors"
+                            className="p-1 text-foreground-muted hover:text-error transition-colors"
                           >
                             <X size={12} />
                           </button>
@@ -179,15 +179,15 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="bg-primary-50 border border-primary-100 rounded-xl p-4">
+                  <div className="bg-primary/10 border border-primary/20 rounded-xl p-4">
                     <p className="text-xs font-semibold text-primary-800 mb-3">Update Summary</p>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-[10px] text-primary-600 uppercase tracking-wider font-medium">Total Units</p>
+                        <p className="text-[10px] text-primary uppercase tracking-wider font-medium">Total Units</p>
                         <p className="text-lg font-bold text-primary-800 font-mono">{totalUnits}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] text-primary-600 uppercase tracking-wider font-medium">Est. Cost</p>
+                        <p className="text-[10px] text-primary uppercase tracking-wider font-medium">Est. Cost</p>
                         <p className="text-lg font-bold text-primary-800 font-mono">{formatCurrency(estimatedCost)}</p>
                       </div>
                     </div>
@@ -197,23 +197,23 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
                     {updates
                       .filter((u) => u.newStock !== u.currentStock)
                       .map((u) => (
-                        <div key={u.productId} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                        <div key={u.productId} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                           <div className="flex items-center gap-2">
                             <span className="text-base">{u.productImage}</span>
-                            <span className="text-xs font-medium text-slate-700">{u.productName}</span>
+                            <span className="text-xs font-medium text-foreground">{u.productName}</span>
                           </div>
                           <div className="text-xs font-mono">
-                            <span className="text-slate-400">{u.currentStock}</span>
-                            <span className="text-slate-300 mx-1">→</span>
-                            <span className="font-bold text-primary-600">{u.newStock}</span>
+                            <span className="text-foreground-muted">{u.currentStock}</span>
+                            <span className="text-foreground-muted mx-1">→</span>
+                            <span className="font-bold text-primary">{u.newStock}</span>
                           </div>
                         </div>
                       ))}
                   </div>
 
-                  <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                    <AlertTriangle size={14} className="text-amber-500 mt-0.5 shrink-0" />
-                    <p className="text-[11px] text-amber-700">
+                  <div className="flex items-start gap-2 p-3 bg-warning/10 border border-warning/20 rounded-xl">
+                    <AlertTriangle size={14} className="text-warning mt-0.5 shrink-0" />
+                    <p className="text-[11px] text-warning">
                       This will update stock quantities for{" "}
                       {updates.filter((u) => u.newStock !== u.currentStock).length} products.
                       This action will be logged in your activity feed.
@@ -224,8 +224,8 @@ export function BulkStockModal({ open, onClose, onUpdated, products }: BulkStock
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-4 border-t border-slate-100 flex items-center justify-between shrink-0">
-              <div className="text-xs text-slate-500">
+            <div className="px-5 py-4 border-t border-border flex items-center justify-between shrink-0">
+              <div className="text-xs text-foreground-muted">
                 {totalUnits > 0 && (
                   <span>
                     +{totalUnits} units · {formatCurrency(estimatedCost)} estimated

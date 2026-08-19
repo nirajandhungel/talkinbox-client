@@ -150,8 +150,8 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
       // 1. If there's a new file, upload it directly to Cloudflare R2
       if (imageFile) {
         // A. Get presigned URL from our API
-        const { uploadUrl, finalUrl } = await apiClient.get<any>(
-          `/media/upload-url?filename=\${encodeURIComponent(imageFile.name)}&contentType=\${encodeURIComponent(imageFile.type)}`
+        const { uploadUrl, finalUrl } = await apiClient.get<{ uploadUrl: string; finalUrl: string }>(
+          `/media/upload-url?filename=${encodeURIComponent(imageFile.name)}&contentType=${encodeURIComponent(imageFile.type)}`
         );
 
         // B. Upload directly to Cloudflare
@@ -181,10 +181,10 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
       };
 
       if (isEdit && product) {
-        await productsApi.update(product.id, productData as any);
+        await productsApi.update(product.id, productData);
         success(`"${name}" updated successfully`);
       } else {
-        await productsApi.create(productData as any);
+        await productsApi.create(productData);
         success(`"${name}" added to inventory`);
       }
 
@@ -225,21 +225,21 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 8 }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-2xl shadow-card-lg w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="bg-surface rounded-2xl shadow-card-lg w-full max-w-lg max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-slate-100 flex items-center justify-between rounded-t-2xl">
+            <div className="sticky top-0 bg-surface z-10 px-5 py-4 border-b border-border flex items-center justify-between rounded-t-2xl">
               <div>
-                <h3 className="text-sm font-bold text-slate-800">
+                <h3 className="text-sm font-bold text-foreground">
                   {isEdit ? "Edit Product" : "Add New Product"}
                 </h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[11px] text-foreground-muted mt-0.5">
                   {isEdit ? "Update product details and inventory" : "Add a new product to your inventory"}
                 </p>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-foreground-muted hover:text-foreground-muted hover:bg-surface-elevated transition-colors"
               >
                 <X size={15} />
               </button>
@@ -249,9 +249,9 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               {/* Top-level error banner */}
               {formError && (
-                <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-lg px-3.5 py-3">
-                  <AlertCircle size={14} className="text-red-500 shrink-0 mt-0.5" />
-                  <p className="text-xs text-red-700">{formError}</p>
+                <div className="flex items-start gap-2.5 bg-error/10 border border-error/20 rounded-lg px-3.5 py-3">
+                  <AlertCircle size={14} className="text-error shrink-0 mt-0.5" />
+                  <p className="text-xs text-error">{formError}</p>
                 </div>
               )}
 
@@ -259,14 +259,14 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
               <div className="flex items-center gap-4">
                 <div className="relative group">
                   <label className="cursor-pointer block">
-                    <div className="w-16 h-16 rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center text-3xl hover:border-primary-300 hover:bg-primary-50/30 transition-all overflow-hidden relative">
+                    <div className="w-16 h-16 rounded-xl bg-surface-elevated border-2 border-dashed border-border flex items-center justify-center text-3xl hover:border-primary/40 hover:bg-primary/10 transition-all overflow-hidden relative">
                       {imagePreview ? (
                         <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
                         image
                       )}
                       <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <Plus size={20} className="text-white" />
+                        <Plus size={20} className="text-primary-foreground" />
                       </div>
                     </div>
                     <input
@@ -280,16 +280,16 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                   <button
                     type="button"
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                    className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full shadow-sm border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors z-10"
+                    className="absolute -bottom-1 -right-1 w-5 h-5 bg-surface rounded-full shadow-sm border border-border flex items-center justify-center hover:bg-surface-elevated transition-colors z-10"
                     title="Choose emoji instead"
                   >
-                    <Plus size={10} className="text-slate-400 rotate-45" />
+                    <Plus size={10} className="text-foreground-muted rotate-45" />
                   </button>
 
                   {showEmojiPicker && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setShowEmojiPicker(false)} />
-                      <div className="absolute top-full left-0 mt-1 z-20 bg-white rounded-xl border border-slate-200 shadow-lg p-2 grid grid-cols-8 gap-1 w-[240px]">
+                      <div className="absolute top-full left-0 mt-1 z-20 bg-surface rounded-xl border border-border shadow-lg p-2 grid grid-cols-8 gap-1 w-[240px]">
                         {EMOJI_OPTIONS.map((emoji) => (
                           <button
                             key={emoji}
@@ -300,7 +300,7 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                               setImagePreview(null);
                               setShowEmojiPicker(false); 
                             }}
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center text-lg hover:bg-primary-50 transition-colors ${image === emoji && !imagePreview ? "bg-primary-100 ring-1 ring-primary-400" : ""}`}
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center text-lg hover:bg-primary/10 transition-colors ${image === emoji && !imagePreview ? "bg-primary/20 ring-1 ring-primary/40" : ""}`}
                           >
                             {emoji}
                           </button>
@@ -310,8 +310,8 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                   )}
                 </div>
                 <div className="flex-1 space-y-1">
-                  <p className="text-xs font-medium text-slate-600">Product Image (Optional)</p>
-                  <p className="text-[10px] text-slate-400">Click the box to upload a photo, or the small icon to pick an emoji.</p>
+                  <p className="text-xs font-medium text-foreground-muted">Product Image (Optional)</p>
+                  <p className="text-[10px] text-foreground-muted">Click the box to upload a photo, or the small icon to pick an emoji.</p>
                 </div>
               </div>
 
@@ -327,7 +327,7 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                     className={fieldErr("name") ? "border-red-400 focus:border-red-500 focus:ring-red-200" : ""}
                   />
                   {fieldErr("name") && (
-                    <p className="text-[10px] text-red-600 flex items-center gap-1">
+                    <p className="text-[10px] text-error flex items-center gap-1">
                       <AlertCircle size={10} /> {fieldErr("name")}
                     </p>
                   )}
@@ -342,7 +342,7 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                     className={fieldErr("sku") ? "border-red-400 focus:border-red-500 focus:ring-red-200" : ""}
                   />
                   {fieldErr("sku") && (
-                    <p className="text-[10px] text-red-600 flex items-center gap-1">
+                    <p className="text-[10px] text-error flex items-center gap-1">
                       <AlertCircle size={10} /> {fieldErr("sku")}
                     </p>
                   )}
@@ -370,7 +370,7 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                     className={fieldErr("price") ? "border-red-400" : ""}
                   />
                   {fieldErr("price") && (
-                    <p className="text-[10px] text-red-600 flex items-center gap-1">
+                    <p className="text-[10px] text-error flex items-center gap-1">
                       <AlertCircle size={10} /> {fieldErr("price")}
                     </p>
                   )}
@@ -386,14 +386,14 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                     className={fieldErr("cost") ? "border-red-400" : ""}
                   />
                   {fieldErr("cost") && (
-                    <p className="text-[10px] text-red-600 flex items-center gap-1">
+                    <p className="text-[10px] text-error flex items-center gap-1">
                       <AlertCircle size={10} /> {fieldErr("cost")}
                     </p>
                   )}
                 </div>
               </div>
               {margin && Number(margin) > 0 && (
-                <p className="text-[10px] text-green-600 font-medium -mt-2">
+                <p className="text-[10px] text-success font-medium -mt-2">
                   💰 Margin: {margin}% (NPR {(Number(price) - Number(cost)).toLocaleString()} per unit)
                 </p>
               )}
@@ -409,18 +409,18 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
 
               {/* Variants */}
               <div className="space-y-2">
-                <label className="text-xs font-medium text-slate-600">Variants / Sizes</label>
+                <label className="text-xs font-medium text-foreground-muted">Variants / Sizes</label>
                 <div className="flex flex-wrap gap-1.5">
                   {variants.map((v) => (
                     <span
                       key={v}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary-50 text-primary-700 text-xs font-medium"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary-hover text-xs font-medium"
                     >
                       {v}
                       <button
                         type="button"
                         onClick={() => removeVariant(v)}
-                        className="text-primary-400 hover:text-red-500 transition-colors"
+                        className="text-primary hover:text-error transition-colors"
                       >
                         <X size={10} />
                       </button>
@@ -434,7 +434,7 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
                         key={v}
                         type="button"
                         onClick={() => addVariant(v)}
-                        className="px-2 py-0.5 rounded text-[10px] font-medium text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
+                        className="px-2 py-0.5 rounded text-[10px] font-medium text-foreground-muted bg-surface-elevated hover:bg-surface-elevated transition-colors"
                       >
                         + {v}
                       </button>
@@ -464,18 +464,18 @@ export function ProductModal({ open, onClose, onSaved, product }: ProductModalPr
 
               {/* Description */}
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-600">Description</label>
+                <label className="text-xs font-medium text-foreground-muted">Description</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={2}
-                  className="w-full rounded-lg border border-slate-200 text-sm text-slate-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 placeholder:text-slate-400"
+                  className="w-full rounded-lg border border-border text-sm text-foreground px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-foreground-muted"
                   placeholder="Product details, fabric, care instructions..."
                 />
               </div>
 
               {/* Actions */}
-              <div className="flex items-center justify-end pt-3 gap-2 border-t border-slate-100">
+              <div className="flex items-center justify-end pt-3 gap-2 border-t border-border">
                 <Button variant="outline" size="sm" type="button" onClick={onClose} disabled={loading}>
                   Cancel
                 </Button>
