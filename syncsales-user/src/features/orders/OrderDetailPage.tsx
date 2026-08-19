@@ -3,44 +3,47 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft, Check, Truck, Package, Clock, Ban,
+  ArrowLeft, Check, Package, Clock, Ban,
   FileText, Printer, MessageSquare, ExternalLink,
   ChevronRight, Copy, MapPin, CreditCard, Calendar,
   ShoppingBag, CheckCircle2, XCircle
 } from "lucide-react";
 import { ordersApi } from "@/api";
-import { QUERY_KEYS, ORDER_STATUS_CONFIG, PLATFORM_CONFIG } from "@/constants";
+import { QUERY_KEYS, ORDER_STATUS_CONFIG, PLATFORM_CONFIG, PAYMENT_STATUS_CONFIG } from "@/constants";
 import { formatCurrency, formatDate, formatTime } from "@/lib/utils";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Badge, StatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { useToast } from "@/components/feedback/Toast";
+import { useChartTheme } from "@/hooks/useChartTheme";
 import { useConfirmDialog } from "@/store";
 import type { Order, OrderStatus } from "@/types";
 
 // ─── Status Flow Configuration ────────────────────────────────────
 
 const STATUS_FLOW: Record<string, OrderStatus | null> = {
-  pending: "processing",
-  processing: "shipped",
-  shipped: "delivered",
-  delivered: null,
+  held: "pending_payment",
+  pending_payment: "confirmed",
+  confirmed: "completed",
+  completed: null,
   cancelled: null,
+  expired: null,
+  no_show: null,
   returned: null,
 };
 
 const STATUS_ACTIONS: Record<string, { label: string; icon: typeof Check; variant: "primary" | "secondary" }> = {
-  pending: { label: "Mark Processing", icon: Package, variant: "primary" },
-  processing: { label: "Mark Shipped", icon: Truck, variant: "primary" },
-  shipped: { label: "Mark Delivered", icon: Check, variant: "primary" },
+  held: { label: "Mark Pending Payment", icon: Clock, variant: "primary" },
+  pending_payment: { label: "Mark Confirmed", icon: Package, variant: "primary" },
+  confirmed: { label: "Mark Completed", icon: Check, variant: "primary" },
 };
 
 const TIMELINE_STEPS: { key: OrderStatus; label: string; icon: typeof Clock }[] = [
-  { key: "pending", label: "Order Placed", icon: ShoppingBag },
-  { key: "processing", label: "Processing", icon: Package },
-  { key: "shipped", label: "Shipped", icon: Truck },
-  { key: "delivered", label: "Delivered", icon: CheckCircle2 },
+  { key: "held", label: "Order Placed", icon: ShoppingBag },
+  { key: "pending_payment", label: "Payment", icon: CreditCard },
+  { key: "confirmed", label: "Confirmed", icon: Package },
+  { key: "completed", label: "Completed", icon: CheckCircle2 },
 ];
 
 const PLATFORM_LINKS: Record<string, (name: string) => string> = {
@@ -58,7 +61,7 @@ function generateAuditLog(order: Order) {
     { action: "Order created", user: "AI Bot", timestamp: order.date, icon: ShoppingBag, color: "#3B82F6" },
   ];
   const orderDate = new Date(order.date);
-  const statuses: OrderStatus[] = ["pending", "processing", "shipped", "delivered", "cancelled"];
+  const statuses: OrderStatus[] = ["held", "pending_payment", "confirmed", "completed", "cancelled"];
   const idx = statuses.indexOf(order.status);
 
   if (order.status === "cancelled") {
@@ -70,9 +73,9 @@ function generateAuditLog(order: Order) {
       color: "#EF4444",
     });
   } else {
-    if (idx >= 1) logs.push({ action: "Marked as processing", user: "Sajjan Mahat", timestamp: new Date(orderDate.getTime() + 1800000).toISOString(), icon: Package, color: "#3B82F6" });
-    if (idx >= 2) logs.push({ action: "Marked as shipped", user: "System", timestamp: new Date(orderDate.getTime() + 7200000).toISOString(), icon: Truck, color: "#8B5CF6" });
-    if (idx >= 3) logs.push({ action: "Marked as delivered", user: "Delivery Partner", timestamp: new Date(orderDate.getTime() + 86400000).toISOString(), icon: CheckCircle2, color: "#10B981" });
+    if (idx >= 1) logs.push({ action: "Marked as pending payment", user: "Sajjan Mahat", timestamp: new Date(orderDate.getTime() + 1800000).toISOString(), icon: Clock, color: "#FFB020" });
+    if (idx >= 2) logs.push({ action: "Marked as confirmed", user: "System", timestamp: new Date(orderDate.getTime() + 7200000).toISOString(), icon: Package, color: "#00C94A" });
+    if (idx >= 3) logs.push({ action: "Marked as completed", user: "System", timestamp: new Date(orderDate.getTime() + 86400000).toISOString(), icon: CheckCircle2, color: "#00C94A" });
   }
 
   if (order.paymentStatus === "paid") {
@@ -129,6 +132,7 @@ export default function OrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const chart = useChartTheme();
   const { success, error: toastError, info } = useToast();
   const confirm = useConfirmDialog();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -178,7 +182,7 @@ export default function OrderDetailPage() {
 
   if (!order) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 text-slate-400">
+      <div className="flex flex-col items-center justify-center h-96 text-foreground-muted">
         <ShoppingBag size={48} className="mb-4" />
         <p className="text-lg font-semibold">Order not found</p>
         <Button variant="outline" size="sm" className="mt-4" onClick={() => navigate("/orders")}>
@@ -192,7 +196,7 @@ export default function OrderDetailPage() {
   const actionConfig = STATUS_ACTIONS[order.status];
   const platformCfg = PLATFORM_CONFIG[order.platform];
   const statusCfg = ORDER_STATUS_CONFIG[order.status];
-  const canCancel = ["pending", "processing"].includes(order.status);
+  const canCancel = ["held", "pending_payment", "confirmed"].includes(order.status);
 
   const handleAdvanceStatus = () => {
     if (!nextStatus) return;
@@ -240,7 +244,7 @@ export default function OrderDetailPage() {
       {/* ─── Back + Header ──────────────────────────────── */}
       <button
         onClick={() => navigate("/orders")}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-primary-600 transition-colors group"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground-muted hover:text-primary transition-colors group"
       >
         <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
         Back to Orders
@@ -248,29 +252,26 @@ export default function OrderDetailPage() {
 
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-primary-50 border border-primary-100 flex items-center justify-center">
-            <ShoppingBag size={22} className="text-primary-600" />
+          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <ShoppingBag size={22} className="text-primary" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-800">{order.id}</h1>
-              <button onClick={handleCopyOrderId} className="text-slate-400 hover:text-primary-600 transition-colors">
+              <h1 className="text-xl font-bold text-foreground">{order.id}</h1>
+              <button onClick={handleCopyOrderId} className="text-foreground-muted hover:text-primary transition-colors">
                 <Copy size={14} />
               </button>
             </div>
-            <div className="flex items-center gap-2 mt-1 text-sm text-slate-500">
+            <div className="flex items-center gap-2 mt-1 text-sm text-foreground-muted">
               <Calendar size={13} />
               <span>{formatDate(order.date)} at {formatTime(order.date)}</span>
-              <span className="text-slate-300">•</span>
-              <Badge color={platformCfg?.color} bg={platformCfg?.bg}>{platformCfg?.label}</Badge>
+              <span className="text-foreground-muted">•</span>
+              <Badge color={platformCfg?.color}>{platformCfg?.label}</Badge>
             </div>
             <div className="flex gap-2 mt-2">
               <StatusBadge config={statusCfg} />
-              <Badge
-                color={order.paymentStatus === "paid" ? "#10B981" : order.paymentStatus === "refunded" ? "#6B7280" : "#F59E0B"}
-                bg={order.paymentStatus === "paid" ? "#f0fdf4" : order.paymentStatus === "refunded" ? "#f9fafb" : "#fffbeb"}
-              >
-                {order.payment} · {order.paymentStatus}
+              <Badge tone={(PAYMENT_STATUS_CONFIG[order.paymentStatus] ?? PAYMENT_STATUS_CONFIG.pending).tone}>
+                {order.payment} · {(PAYMENT_STATUS_CONFIG[order.paymentStatus] ?? PAYMENT_STATUS_CONFIG.pending).label}
               </Badge>
             </div>
           </div>
@@ -321,11 +322,11 @@ export default function OrderDetailPage() {
                       initial={false}
                       animate={{
                         scale: isCurrent ? 1.1 : 1,
-                        backgroundColor: isCompleted ? "#006D5B" : "#e2e8f0",
+                        backgroundColor: isCompleted ? chart.primary : chart.border,
                       }}
                       transition={{ duration: 0.3 }}
                       className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                        isCompleted ? "text-white shadow-sm" : "text-slate-400"
+                        isCompleted ? "text-primary-foreground shadow-sm" : "text-foreground-muted"
                       }`}
                     >
                       {isCompleted && i < currentStepIndex ? (
@@ -334,18 +335,18 @@ export default function OrderDetailPage() {
                         <StepIcon size={18} />
                       )}
                     </motion.div>
-                    <span className={`text-xs font-medium ${isCurrent ? "text-primary-600" : isCompleted ? "text-slate-700" : "text-slate-400"}`}>
+                    <span className={`text-xs font-medium ${isCurrent ? "text-primary" : isCompleted ? "text-foreground" : "text-foreground-muted"}`}>
                       {step.label}
                     </span>
                   </div>
                   {i < TIMELINE_STEPS.length - 1 && (
                     <div className="flex-1 mx-3">
-                      <div className="h-0.5 rounded-full bg-slate-200 relative overflow-hidden">
+                      <div className="h-0.5 rounded-full bg-surface-elevated relative overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: currentStepIndex > i ? "100%" : "0%" }}
                           transition={{ duration: 0.5, delay: i * 0.1 }}
-                          className="absolute inset-y-0 left-0 bg-primary-500 rounded-full"
+                          className="absolute inset-y-0 left-0 bg-primary rounded-full"
                         />
                       </div>
                     </div>
@@ -358,14 +359,14 @@ export default function OrderDetailPage() {
       )}
 
       {isCancelled && (
-        <Card className="border-red-200 bg-red-50/50">
+        <Card className="border-error/20 bg-error/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-              <XCircle size={20} className="text-red-500" />
+            <div className="w-10 h-10 rounded-full bg-error/15 flex items-center justify-center">
+              <XCircle size={20} className="text-error" />
             </div>
             <div>
-              <p className="font-semibold text-red-800">Order Cancelled</p>
-              <p className="text-sm text-red-600">
+              <p className="font-semibold text-error">Order Cancelled</p>
+              <p className="text-sm text-error">
                 This order was cancelled{order.note ? `: ${order.note}` : "."}
               </p>
             </div>
@@ -380,44 +381,44 @@ export default function OrderDetailPage() {
           {/* Order Items */}
           <Card>
             <CardHeader title="Order Items" subtitle={`${order.items.length} item${order.items.length !== 1 ? "s" : ""}`} />
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border">
               {order.items.map((item, i) => (
                 <div key={i} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-lg">
+                    <div className="w-10 h-10 rounded-lg bg-surface-elevated border border-border flex items-center justify-center text-lg">
                       📦
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">{item.name}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-sm font-semibold text-foreground">{item.name}</p>
+                      <p className="text-xs text-foreground-muted">
                         Size: {item.size} · Qty: {item.qty} · {formatCurrency(item.price)} each
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-slate-800 font-mono">{formatCurrency(item.price * item.qty)}</p>
+                    <p className="text-sm font-bold text-foreground font-mono">{formatCurrency(item.price * item.qty)}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Financial Breakdown */}
-            <div className="mt-4 pt-4 border-t border-slate-100 space-y-2">
+            <div className="mt-4 pt-4 border-t border-border space-y-2">
               {[
                 ["Subtotal", order.subtotal],
                 ["Delivery Fee", order.delivery],
                 ...(order.discount > 0 ? [["Discount", -order.discount] as [string, number]] : []),
               ].map(([label, value]) => (
                 <div key={label as string} className="flex justify-between text-sm">
-                  <span className="text-slate-500">{label as string}</span>
-                  <span className="font-mono text-slate-700">
+                  <span className="text-foreground-muted">{label as string}</span>
+                  <span className="font-mono text-foreground">
                     {(value as number) < 0 ? "-" : ""}{formatCurrency(Math.abs(value as number))}
                   </span>
                 </div>
               ))}
-              <div className="flex justify-between pt-3 mt-2 border-t border-slate-200">
-                <span className="text-base font-bold text-slate-800">Total</span>
-                <span className="text-base font-bold text-primary-600 font-mono">{formatCurrency(order.total)}</span>
+              <div className="flex justify-between pt-3 mt-2 border-t border-border">
+                <span className="text-base font-bold text-foreground">Total</span>
+                <span className="text-base font-bold text-primary font-mono">{formatCurrency(order.total)}</span>
               </div>
             </div>
           </Card>
@@ -426,7 +427,7 @@ export default function OrderDetailPage() {
           <Card>
             <CardHeader title="Order Timeline" subtitle="Activity log and status changes" />
             <div className="relative">
-              <div className="absolute left-[15px] top-0 bottom-0 w-px bg-slate-200" />
+              <div className="absolute left-[15px] top-0 bottom-0 w-px bg-surface-elevated" />
               <div className="space-y-4">
                 {auditLog.map((log, i) => {
                   const LogIcon = log.icon;
@@ -439,17 +440,17 @@ export default function OrderDetailPage() {
                       className="flex gap-3 relative"
                     >
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 border-2 border-white"
+                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 border-2 border-surface"
                         style={{ backgroundColor: `${log.color}18`, color: log.color }}
                       >
                         <LogIcon size={14} />
                       </div>
                       <div className="flex-1 pb-1">
-                        <p className="text-sm font-medium text-slate-700">{log.action}</p>
+                        <p className="text-sm font-medium text-foreground">{log.action}</p>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-slate-500">by {log.user}</span>
-                          <span className="text-xs text-slate-400">•</span>
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-foreground-muted">by {log.user}</span>
+                          <span className="text-xs text-foreground-muted">•</span>
+                          <span className="text-xs text-foreground-muted">
                             {formatDate(log.timestamp)} at {formatTime(log.timestamp)}
                           </span>
                         </div>
@@ -470,30 +471,30 @@ export default function OrderDetailPage() {
             <div className="flex items-center gap-3 mb-4">
               <Avatar name={order.customer?.name || "Guest"} size="md" />
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-slate-800 truncate">{order.customer?.name || "Guest"}</p>
-                <Badge color={platformCfg?.color} bg={platformCfg?.bg} className="mt-1">{platformCfg?.label}</Badge>
+                <p className="text-sm font-semibold text-foreground truncate">{order.customer?.name || "Guest"}</p>
+                <Badge color={platformCfg?.color} className="mt-1">{platformCfg?.label}</Badge>
               </div>
             </div>
 
             <div className="space-y-3">
               <div className="flex items-start gap-2.5">
-                <MapPin size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                <p className="text-sm text-slate-600">{order.address}</p>
+                <MapPin size={14} className="text-foreground-muted mt-0.5 shrink-0" />
+                <p className="text-sm text-foreground-muted">{order.address}</p>
               </div>
               {order.customerId && (
                 <button
                   onClick={() => navigate(`/customers`)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group"
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-surface-elevated hover:bg-surface-elevated transition-colors group"
                 >
-                  <span className="text-xs font-medium text-slate-600">View customer profile</span>
-                  <ChevronRight size={14} className="text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                  <span className="text-xs font-medium text-foreground-muted">View customer profile</span>
+                  <ChevronRight size={14} className="text-foreground-muted group-hover:translate-x-0.5 transition-transform" />
                 </button>
               )}
             </div>
 
             {/* Contact Buttons */}
-            <div className="mt-4 pt-4 border-t border-slate-100">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Contact</p>
+            <div className="mt-4 pt-4 border-t border-border">
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-3">Contact</p>
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   variant="outline"
@@ -527,19 +528,19 @@ export default function OrderDetailPage() {
                 ["Amount", formatCurrency(order.total)],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between items-center">
-                  <span className="text-xs text-slate-500">{label}</span>
-                  <span className="text-xs font-semibold text-slate-800">{value}</span>
+                  <span className="text-xs text-foreground-muted">{label}</span>
+                  <span className="text-xs font-semibold text-foreground">{value}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
+            <div className="mt-4 pt-3 border-t border-border">
               <div
                 className={`px-3 py-2 rounded-lg text-xs font-medium text-center ${
                   order.paymentStatus === "paid"
-                    ? "bg-green-50 text-green-700 border border-green-200"
+                    ? "bg-success/10 text-success border border-success/20"
                     : order.paymentStatus === "refunded"
-                    ? "bg-slate-50 text-slate-600 border border-slate-200"
-                    : "bg-amber-50 text-amber-700 border border-amber-200"
+                    ? "bg-surface-elevated text-foreground-muted border border-border"
+                    : "bg-warning/10 text-warning border border-warning/20"
                 }`}
               >
                 {order.paymentStatus === "paid" && "✓ Payment confirmed"}
@@ -554,8 +555,8 @@ export default function OrderDetailPage() {
           {order.note && (
             <Card>
               <CardHeader title="Order Note" />
-              <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
-                <p className="text-sm text-amber-800">{order.note}</p>
+              <div className="bg-warning/10 border border-warning/20 rounded-lg px-3 py-2.5">
+                <p className="text-sm text-warning">{order.note}</p>
               </div>
             </Card>
           )}
@@ -566,44 +567,44 @@ export default function OrderDetailPage() {
             <div className="space-y-2">
               <button
                 onClick={() => { generateInvoice(order); success("Invoice downloaded"); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-elevated transition-colors text-left group"
               >
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-                  <FileText size={15} className="text-blue-600" />
+                <div className="w-8 h-8 rounded-lg bg-primary-soft flex items-center justify-center">
+                  <FileText size={15} className="text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Generate Invoice</p>
-                  <p className="text-xs text-slate-400">Download PDF invoice</p>
+                  <p className="text-sm font-medium text-foreground">Generate Invoice</p>
+                  <p className="text-xs text-foreground-muted">Download PDF invoice</p>
                 </div>
-                <ChevronRight size={14} className="text-slate-300 ml-auto group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight size={14} className="text-foreground-muted ml-auto group-hover:translate-x-0.5 transition-transform" />
               </button>
 
               <button
                 onClick={() => { window.print(); info("Print label dialog opened"); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-elevated transition-colors text-left group"
               >
-                <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
-                  <Printer size={15} className="text-purple-600" />
+                <div className="w-8 h-8 rounded-lg bg-primary-soft flex items-center justify-center">
+                  <Printer size={15} className="text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Print Shipping Label</p>
-                  <p className="text-xs text-slate-400">Ready for courier</p>
+                  <p className="text-sm font-medium text-foreground">Print Shipping Label</p>
+                  <p className="text-xs text-foreground-muted">Ready for courier</p>
                 </div>
-                <ChevronRight size={14} className="text-slate-300 ml-auto group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight size={14} className="text-foreground-muted ml-auto group-hover:translate-x-0.5 transition-transform" />
               </button>
 
               <button
                 onClick={handleContactCustomer}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-elevated transition-colors text-left group"
               >
-                <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                  <MessageSquare size={15} className="text-green-600" />
+                <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+                  <MessageSquare size={15} className="text-success" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Contact on {platformCfg?.label}</p>
-                  <p className="text-xs text-slate-400">Open conversation</p>
+                  <p className="text-sm font-medium text-foreground">Contact on {platformCfg?.label}</p>
+                  <p className="text-xs text-foreground-muted">Open conversation</p>
                 </div>
-                <ChevronRight size={14} className="text-slate-300 ml-auto group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight size={14} className="text-foreground-muted ml-auto group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
           </Card>
