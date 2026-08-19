@@ -21,6 +21,7 @@ const AutomationPage = lazy(() => import("@/features/automation/AutomationPage")
 const IntegrationsPage = lazy(() => import("@/features/integrations/IntegrationsPage"));
 const ConnectIntegrationPage = lazy(() => import("@/features/integrations/ConnectIntegrationPage"));
 const SettingsPage = lazy(() => import("@/features/settings/SettingsPage"));
+const AIAssistantPage = lazy(() => import("@/features/ai-assistant/AIAssistantPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 // Auth pages
@@ -43,7 +44,7 @@ function PageLoader() {
     <div className="space-y-4 animate-fade-in">
       <div className="grid grid-cols-4 gap-4">
         {Array.from({ length: 4 }, (_, i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-100 p-5 h-24 skeleton" />
+          <div key={i} className="bg-surface rounded-xl border border-border p-5 h-24 skeleton" />
         ))}
       </div>
       <SkeletonTable rows={6} />
@@ -53,8 +54,8 @@ function PageLoader() {
 
 function AuthLoader() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-primary-400 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
@@ -126,6 +127,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute permission="inbox.manage">
             <SuspenseWrapper><InboxPage /></SuspenseWrapper>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "ai",
+        element: (
+          <ProtectedRoute>
+            <SuspenseWrapper><AIAssistantPage /></SuspenseWrapper>
           </ProtectedRoute>
         ),
       },

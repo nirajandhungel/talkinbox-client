@@ -27,10 +27,10 @@ export function ProtectedRoute({ children, permission, anyOf }: ProtectedRoutePr
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
+      <div className="flex h-screen items-center justify-center bg-surface-elevated">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-3 border-primary-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-slate-500">Verifying session…</p>
+          <p className="text-xs text-foreground-muted">Verifying session…</p>
         </div>
       </div>
     );
