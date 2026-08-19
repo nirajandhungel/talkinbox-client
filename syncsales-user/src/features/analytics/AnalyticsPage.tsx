@@ -40,8 +40,8 @@ export default function AnalyticsPage() {
     <div className="space-y-5 max-w-[1200px]">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-slate-800">Analytics</h2>
-          <p className="text-xs text-slate-500">Business performance overview</p>
+          <h2 className="text-base font-bold text-foreground">Analytics</h2>
+          <p className="text-xs text-foreground-muted">Business performance overview</p>
         </div>
       </div>
 
@@ -57,13 +57,13 @@ export default function AnalyticsPage() {
             { label: "Total Customers", value: dashStats?.totalCustomers?.toLocaleString() ?? "—", change: "—" },
           ].map(s => (
             <Card key={s.label} hoverable={!!s.onClick} onClick={s.onClick} padding="md">
-              <p className="text-xl font-bold text-slate-800">{s.value}</p>
+              <p className="text-xl font-bold text-foreground">{s.value}</p>
               <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-slate-500">{s.label}</p>
-                <span className="text-xs font-medium text-green-600">{s.change}</span>
+                <p className="text-xs text-foreground-muted">{s.label}</p>
+                <span className="text-xs font-medium text-success">{s.change}</span>
               </div>
               {s.onClick && (
-                <div className="flex items-center gap-1 mt-2 text-[10px] text-primary-600 font-medium">
+                <div className="flex items-center gap-1 mt-2 text-[10px] text-primary font-medium">
                   <TrendingUp size={10} /> View detailed breakdown <ArrowRight size={10} />
                 </div>
               )}
@@ -97,7 +97,7 @@ export default function AnalyticsPage() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[220px] flex items-center justify-center text-sm text-slate-400">
+            <div className="h-[220px] flex items-center justify-center text-sm text-foreground-muted">
               {revenueData ? "No revenue data available" : <div className="h-[220px] skeleton rounded-lg w-full" />}
             </div>
           )}
@@ -121,15 +121,15 @@ export default function AnalyticsPage() {
                 {platformData.map(p => (
                   <div key={p.channel} className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color || "#006D5B" }} />
-                    <span className="text-xs text-slate-600 flex-1">{p.channel}</span>
-                    <span className="text-xs font-semibold text-slate-700">{formatCompact(p.revenue)}</span>
-                    <span className="text-[10px] text-slate-400">{p.orders} orders</span>
+                    <span className="text-xs text-foreground-muted flex-1">{p.channel}</span>
+                    <span className="text-xs font-semibold text-foreground">{formatCompact(p.revenue)}</span>
+                    <span className="text-[10px] text-foreground-muted">{p.orders} orders</span>
                   </div>
                 ))}
               </div>
             </>
           ) : (
-            <div className="h-[220px] flex items-center justify-center text-sm text-slate-400">
+            <div className="h-[220px] flex items-center justify-center text-sm text-foreground-muted">
               {platformData ? "No channel data available" : <div className="h-[220px] skeleton rounded-lg w-full" />}
             </div>
           )}
@@ -150,7 +150,7 @@ export default function AnalyticsPage() {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[200px] flex items-center justify-center text-sm text-slate-400">
+          <div className="h-[200px] flex items-center justify-center text-sm text-foreground-muted">
             No data available
           </div>
         )}

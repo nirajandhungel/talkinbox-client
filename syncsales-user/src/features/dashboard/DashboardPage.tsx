@@ -15,17 +15,18 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/feedback/Skeleton";
+import { useChartTheme } from "@/hooks/useChartTheme";
 
 // ─── Skeleton components ─────────────────────────────────────────────────────
 function StatCardSkeleton() {
   return (
-    <div className="bg-white rounded-xl border border-slate-100 p-5 space-y-3 animate-pulse">
+    <div className="bg-surface rounded-xl border border-border p-5 space-y-3 animate-pulse">
       <div className="flex justify-between items-start">
-        <div className="w-8 h-8 rounded-lg bg-slate-100" />
-        <div className="w-10 h-4 rounded bg-slate-100" />
+        <div className="w-8 h-8 rounded-lg bg-surface-elevated" />
+        <div className="w-10 h-4 rounded bg-surface-elevated" />
       </div>
-      <div className="w-20 h-7 rounded bg-slate-100" />
-      <div className="w-28 h-3 rounded bg-slate-100" />
+      <div className="w-20 h-7 rounded bg-surface-elevated" />
+      <div className="w-28 h-3 rounded bg-surface-elevated" />
     </div>
   );
 }
@@ -33,11 +34,11 @@ function StatCardSkeleton() {
 function ChartSkeleton({ height = 200 }: { height?: number }) {
   return (
     <div className="animate-pulse" style={{ height }}>
-      <div className="h-full rounded-lg bg-slate-50 flex items-end gap-1 px-4 pb-4">
+      <div className="h-full rounded-lg bg-surface-elevated flex items-end gap-1 px-4 pb-4">
         {Array.from({ length: 12 }, (_, i) => (
           <div
             key={i}
-            className="flex-1 bg-slate-200 rounded-t"
+            className="flex-1 bg-border rounded-t"
             style={{ height: `${30 + Math.random() * 60}%` }}
           />
         ))}
@@ -48,11 +49,11 @@ function ChartSkeleton({ height = 200 }: { height?: number }) {
 
 function TableRowSkeleton() {
   return (
-    <div className="flex items-center gap-3 px-5 py-3 border-b border-slate-50 animate-pulse">
-      <div className="w-16 h-3 rounded bg-slate-100" />
-      <div className="flex-1 h-3 rounded bg-slate-100" />
-      <div className="w-12 h-3 rounded bg-slate-100" />
-      <div className="w-16 h-5 rounded-full bg-slate-100" />
+    <div className="flex items-center gap-3 px-5 py-3 border-b border-border animate-pulse">
+      <div className="w-16 h-3 rounded bg-surface-elevated" />
+      <div className="flex-1 h-3 rounded bg-surface-elevated" />
+      <div className="w-12 h-3 rounded bg-surface-elevated" />
+      <div className="w-16 h-5 rounded-full bg-surface-elevated" />
     </div>
   );
 }
@@ -61,11 +62,11 @@ function TableRowSkeleton() {
 function ErrorBlock({ label, onRetry }: { label: string; onRetry: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
-      <AlertTriangle size={18} className="text-amber-400" />
-      <p className="text-xs text-slate-500">{label}</p>
+      <AlertTriangle size={18} className="text-warning" />
+      <p className="text-xs text-foreground-muted">{label}</p>
       <button
         onClick={onRetry}
-        className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 transition-colors font-medium"
+        className="flex items-center gap-1 text-xs text-primary hover:text-primary-hover transition-colors font-medium"
       >
         <RefreshCw size={11} /> Retry
       </button>
@@ -86,6 +87,7 @@ const ITEM = {
 // ─── Dashboard Page ──────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const chart = useChartTheme();
 
   const {
     data: stats,
@@ -138,32 +140,32 @@ export default function DashboardPage() {
       value: statsLoading ? null : statsError ? "—" : formatCompact(stats?.weekRevenue ?? 0),
       change: statsError ? undefined : stats ? 0 : undefined,
       icon: <TrendingUp size={16} />,
-      iconBg: "bg-primary-50",
-      iconColor: "text-primary-600",
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary",
       onClick: () => navigate("/analytics/revenue"),
     },
     {
       title: "Today's Orders",
       value: statsLoading ? null : statsError ? "—" : (stats?.todayOrders ?? 0),
       icon: <ShoppingCart size={16} />,
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-600",
+      iconBg: "bg-primary-soft",
+      iconColor: "text-primary",
       onClick: () => navigate("/orders"),
     },
     {
       title: "Total Customers",
       value: statsLoading ? null : statsError ? "—" : (stats?.totalCustomers ?? 0),
       icon: <Users size={16} />,
-      iconBg: "bg-purple-50",
-      iconColor: "text-purple-600",
+      iconBg: "bg-primary-soft",
+      iconColor: "text-primary",
       onClick: () => navigate("/customers"),
     },
     {
       title: "Low Stock Items",
       value: statsLoading ? null : statsError ? "—" : (stats?.lowStockCount ?? 0),
       icon: <Package size={16} />,
-      iconBg: "bg-amber-50",
-      iconColor: "text-amber-600",
+      iconBg: "bg-warning/10",
+      iconColor: "text-warning",
       onClick: () => navigate("/inventory"),
     },
   ];
@@ -193,18 +195,18 @@ export default function DashboardPage() {
                     <span className={card.iconColor}>{card.icon}</span>
                   </div>
                   {card.change !== undefined && (
-                    <div className={`flex items-center gap-0.5 text-xs font-medium ${card.change >= 0 ? "text-green-600" : "text-red-500"}`}>
+                    <div className={`flex items-center gap-0.5 text-xs font-medium ${card.change >= 0 ? "text-success" : "text-error"}`}>
                       {card.change >= 0 ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
                       {Math.abs(card.change)}%
                     </div>
                   )}
                 </div>
-                <p className="text-2xl font-bold text-slate-800 mb-1">
+                <p className="text-2xl font-bold text-foreground mb-1">
                   {String(card.value ?? "—")}
                 </p>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-slate-500">{card.title}</p>
-                  <ArrowRight size={12} className="text-slate-300 group-hover:text-primary-500 transition-colors" />
+                  <p className="text-xs text-foreground-muted">{card.title}</p>
+                  <ArrowRight size={12} className="text-foreground-muted group-hover:text-primary transition-colors" />
                 </div>
               </Card>
             )}
@@ -235,26 +237,26 @@ export default function DashboardPage() {
                 <AreaChart data={revenueData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#006D5B" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#006D5B" stopOpacity={0} />
+                      <stop offset="5%" stopColor={chart.primary} stopOpacity={0.15} />
+                      <stop offset="95%" stopColor={chart.primary} stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                  <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                  <XAxis dataKey="date" tick={chart.tick} />
+                  <YAxis tick={chart.tickSmall} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
                   <Tooltip
                     formatter={(v: number) => formatCurrency(v)}
-                    labelStyle={{ fontSize: 12 }}
-                    contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #e2e8f0" }}
+                    labelStyle={{ fontSize: 12, color: chart.foreground }}
+                    contentStyle={chart.tooltip}
                   />
-                  <Area type="monotone" dataKey="grossRevenue" stroke="#006D5B" strokeWidth={2} fill="url(#revenueGrad)" />
+                  <Area type="monotone" dataKey="grossRevenue" stroke={chart.primary} strokeWidth={2} fill="url(#revenueGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
               <div className="h-[200px] flex flex-col items-center justify-center gap-2 text-center">
-                <BarChart2 size={30} className="text-slate-200" />
-                <p className="text-sm text-slate-400 font-medium">No revenue data yet</p>
-                <p className="text-xs text-slate-300">Revenue will appear once orders are placed</p>
+                <BarChart2 size={30} className="text-foreground" />
+                <p className="text-sm text-foreground-muted font-medium">No revenue data yet</p>
+                <p className="text-xs text-foreground-muted">Revenue will appear once orders are placed</p>
               </div>
             )}
           </Card>
@@ -266,14 +268,14 @@ export default function DashboardPage() {
             <CardHeader title="Channel Breakdown" subtitle="Sales by platform" />
             <div className="mt-2 space-y-3">
               {[
-                { label: "COD / Direct", color: "#F59E0B", pct: 100 },
+                { label: "COD / Direct", color: chart.warning, pct: 100 },
               ].map((ch) => (
                 <div key={ch.label}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-slate-600">{ch.label}</span>
-                    <span className="text-xs font-semibold text-slate-700">{ch.pct}%</span>
+                    <span className="text-xs text-foreground-muted">{ch.label}</span>
+                    <span className="text-xs font-semibold text-foreground">{ch.pct}%</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-1.5">
+                  <div className="w-full bg-surface-elevated rounded-full h-1.5">
                     <div
                       className="h-1.5 rounded-full transition-all duration-1000"
                       style={{ width: `${ch.pct}%`, background: ch.color }}
@@ -281,7 +283,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
-              <p className="text-[11px] text-slate-400 pt-2">
+              <p className="text-[11px] text-foreground-muted pt-2">
                 More channels will appear as you connect integrations
               </p>
               <Button
@@ -302,10 +304,10 @@ export default function DashboardPage() {
         {/* Recent Orders */}
         <motion.div variants={ITEM} className="lg:col-span-2">
           <Card padding="none">
-            <div className="px-5 py-4 flex justify-between items-center border-b border-slate-50">
+            <div className="px-5 py-4 flex justify-between items-center border-b border-border">
               <div>
-                <h3 className="text-sm font-semibold text-slate-800">Recent Orders</h3>
-                <p className="text-xs text-slate-500">Latest activity</p>
+                <h3 className="text-sm font-semibold text-foreground">Recent Orders</h3>
+                <p className="text-xs text-foreground-muted">Latest activity</p>
               </div>
               <Button variant="ghost" size="xs" onClick={() => navigate("/orders")}>
                 View all →
@@ -318,27 +320,27 @@ export default function DashboardPage() {
                 <ErrorBlock label="Could not load recent orders" onRetry={refetchOrders} />
               ) : recentOrders.length === 0 ? (
                 <div className="px-5 py-10 text-center">
-                  <ShoppingCart size={28} className="text-slate-200 mx-auto mb-2" />
-                  <p className="text-sm text-slate-400 font-medium">No orders yet</p>
-                  <p className="text-xs text-slate-300">Orders will appear here once placed</p>
+                  <ShoppingCart size={28} className="text-foreground mx-auto mb-2" />
+                  <p className="text-sm text-foreground-muted font-medium">No orders yet</p>
+                  <p className="text-xs text-foreground-muted">Orders will appear here once placed</p>
                 </div>
               ) : (
                 recentOrders.map((order, i) => {
-                  const statusCfg = ORDER_STATUS_CONFIG[order.status] ?? ORDER_STATUS_CONFIG.pending;
+                  const statusCfg = ORDER_STATUS_CONFIG[order.status] ?? ORDER_STATUS_CONFIG.held;
                   return (
                     <div
                       key={order.id}
-                      className={`flex items-center gap-3 px-5 py-3 hover:bg-slate-50/50 transition-colors ${i < recentOrders.length - 1 ? "border-b border-slate-50" : ""}`}
+                      className={`flex items-center gap-3 px-5 py-3 hover:bg-surface-elevated/50 transition-colors ${i < recentOrders.length - 1 ? "border-b border-border" : ""}`}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-slate-800">
+                        <p className="text-xs font-semibold text-foreground">
                           {order.orderNumber ?? order.id.slice(0, 8)}
                         </p>
-                        <p className="text-[10px] text-slate-500">
+                        <p className="text-[10px] text-foreground-muted">
                           {order.customer?.name ?? "Walk-in customer"}
                         </p>
                       </div>
-                      <p className="text-xs font-semibold text-slate-800">
+                      <p className="text-xs font-semibold text-foreground">
                         {formatCurrency(Number(order.total) || 0)}
                       </p>
                       <StatusBadge config={statusCfg} />
@@ -354,10 +356,10 @@ export default function DashboardPage() {
         <motion.div variants={ITEM} className="space-y-4">
           {/* Low Stock Alert */}
           <Card padding="none">
-            <div className="px-4 py-3 flex justify-between items-center border-b border-slate-50">
+            <div className="px-4 py-3 flex justify-between items-center border-b border-border">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={13} className="text-amber-500" />
-                <h3 className="text-xs font-semibold text-slate-800">Stock Alerts</h3>
+                <AlertTriangle size={13} className="text-warning" />
+                <h3 className="text-xs font-semibold text-foreground">Stock Alerts</h3>
               </div>
               <Button variant="ghost" size="xs" onClick={() => navigate("/inventory")}>View →</Button>
             </div>
@@ -365,7 +367,7 @@ export default function DashboardPage() {
               {productsLoading ? (
                 Array.from({ length: 3 }, (_, i) => (
                   <div key={i} className="flex items-center gap-2 px-2 py-2 animate-pulse">
-                    <div className="w-7 h-7 rounded-lg bg-slate-100 shrink-0" />
+                    <div className="w-7 h-7 rounded-lg bg-surface-elevated shrink-0" />
                     <div className="flex-1 space-y-1">
                       <Skeleton width="70%" height={10} />
                       <Skeleton width="40%" height={8} />
@@ -375,23 +377,23 @@ export default function DashboardPage() {
                 ))
               ) : lowStockProducts.length === 0 ? (
                 <div className="px-2 py-5 text-center">
-                  <Package size={20} className="text-slate-200 mx-auto mb-1" />
-                  <p className="text-xs text-slate-400">All products in stock</p>
+                  <Package size={20} className="text-foreground mx-auto mb-1" />
+                  <p className="text-xs text-foreground-muted">All products in stock</p>
                 </div>
               ) : (
                 lowStockProducts.slice(0, 4).map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-surface-elevated transition-colors"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                      <Package size={12} className="text-amber-500" />
+                    <div className="w-7 h-7 rounded-lg bg-warning/10 flex items-center justify-center shrink-0">
+                      <Package size={12} className="text-warning" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-medium text-slate-700 truncate">{p.name}</p>
-                      <p className="text-[10px] text-slate-400">{p.stock ?? 0} left</p>
+                      <p className="text-xs font-medium text-foreground truncate">{p.name}</p>
+                      <p className="text-[10px] text-foreground-muted">{p.stock ?? 0} left</p>
                     </div>
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
                       Low
                     </span>
                   </div>
@@ -402,7 +404,7 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <Card padding="sm">
-            <h3 className="text-xs font-semibold text-slate-800 mb-3">Quick Actions</h3>
+            <h3 className="text-xs font-semibold text-foreground mb-3">Quick Actions</h3>
             <div className="space-y-1.5">
               {[
                 { label: "Create new order", icon: <ShoppingCart size={12} />, path: "/orders" },
@@ -413,15 +415,15 @@ export default function DashboardPage() {
                 <button
                   key={action.path}
                   onClick={() => navigate(action.path)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left hover:bg-slate-50 transition-colors group"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left hover:bg-surface-elevated transition-colors group"
                 >
-                  <span className="text-slate-400 group-hover:text-primary-500 transition-colors">
+                  <span className="text-foreground-muted group-hover:text-primary transition-colors">
                     {action.icon}
                   </span>
-                  <span className="text-xs text-slate-600 group-hover:text-slate-800 transition-colors">
+                  <span className="text-xs text-foreground-muted group-hover:text-foreground transition-colors">
                     {action.label}
                   </span>
-                  <ArrowRight size={10} className="ml-auto text-slate-300 group-hover:text-primary-400 transition-colors" />
+                  <ArrowRight size={10} className="ml-auto text-foreground-muted group-hover:text-primary transition-colors" />
                 </button>
               ))}
             </div>

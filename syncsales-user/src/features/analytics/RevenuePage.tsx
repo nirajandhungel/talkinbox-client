@@ -41,13 +41,13 @@ export default function RevenuePage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate("/analytics")}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+          className="p-1.5 rounded-lg text-foreground-muted hover:text-foreground-muted hover:bg-surface-elevated transition-colors"
         >
           <ChevronLeft size={16} />
         </button>
         <div className="flex-1">
-          <h2 className="text-base font-bold text-slate-800">Revenue Analysis</h2>
-          <p className="text-xs text-slate-500">Detailed revenue breakdown</p>
+          <h2 className="text-base font-bold text-foreground">Revenue Analysis</h2>
+          <p className="text-xs text-foreground-muted">Detailed revenue breakdown</p>
         </div>
         <Button variant="outline" size="sm" icon={<Download size={13} />}>
           Export CSV
@@ -55,7 +55,7 @@ export default function RevenuePage() {
       </div>
 
       {/* Period Selector */}
-      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
+      <div className="flex gap-1 bg-surface-elevated rounded-xl p-1 w-fit">
         {PERIOD_OPTIONS.map(opt => (
           <button
             key={opt.value}
@@ -63,8 +63,8 @@ export default function RevenuePage() {
             className={cn(
               "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
               period === opt.value
-                ? "bg-white text-primary-700 shadow-card"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-surface text-primary-hover shadow-card"
+                : "text-foreground-muted hover:text-foreground"
             )}
           >
             {opt.label}
@@ -77,10 +77,10 @@ export default function RevenuePage() {
         <Card>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-2xl font-bold text-slate-800">{formatCompact(totalRevenue)}</p>
-              <p className="text-xs text-slate-500 mt-1">Total Revenue</p>
+              <p className="text-2xl font-bold text-foreground">{formatCompact(totalRevenue)}</p>
+              <p className="text-xs text-foreground-muted mt-1">Total Revenue</p>
             </div>
-            <div className="flex items-center gap-0.5 text-xs font-medium text-green-600">
+            <div className="flex items-center gap-0.5 text-xs font-medium text-success">
               <TrendingUp size={12} /> 18%
             </div>
           </div>
@@ -88,10 +88,10 @@ export default function RevenuePage() {
         <Card>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-2xl font-bold text-slate-800">{totalOrders}</p>
-              <p className="text-xs text-slate-500 mt-1">Total Orders</p>
+              <p className="text-2xl font-bold text-foreground">{totalOrders}</p>
+              <p className="text-xs text-foreground-muted mt-1">Total Orders</p>
             </div>
-            <div className="flex items-center gap-0.5 text-xs font-medium text-green-600">
+            <div className="flex items-center gap-0.5 text-xs font-medium text-success">
               <TrendingUp size={12} /> 23%
             </div>
           </div>
@@ -99,10 +99,10 @@ export default function RevenuePage() {
         <Card>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-2xl font-bold text-slate-800">{formatCurrency(Math.round(avgOrderValue))}</p>
-              <p className="text-xs text-slate-500 mt-1">Avg Order Value</p>
+              <p className="text-2xl font-bold text-foreground">{formatCurrency(Math.round(avgOrderValue))}</p>
+              <p className="text-xs text-foreground-muted mt-1">Avg Order Value</p>
             </div>
-            <div className="flex items-center gap-0.5 text-xs font-medium text-red-500">
+            <div className="flex items-center gap-0.5 text-xs font-medium text-error">
               <TrendingDown size={12} /> 3%
             </div>
           </div>

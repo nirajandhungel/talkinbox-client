@@ -69,7 +69,7 @@ export default function RevenueDetailPage() {
       {/* Back + Header */}
       <button
         onClick={() => navigate("/analytics")}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-primary-600 transition-colors group"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground-muted hover:text-primary transition-colors group"
       >
         <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
         Back to Analytics
@@ -77,8 +77,8 @@ export default function RevenueDetailPage() {
 
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-lg font-bold text-slate-800">Revenue Breakdown</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h2 className="text-lg font-bold text-foreground">Revenue Breakdown</h2>
+          <p className="text-xs text-foreground-muted mt-0.5">
             Detailed revenue and order analysis
           </p>
         </div>
@@ -101,20 +101,20 @@ export default function RevenueDetailPage() {
             <Card key={kpi.label} padding="md">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{kpi.label}</p>
-                  <p className="text-xl font-bold text-slate-800 font-mono mt-1">{kpi.value}</p>
+                  <p className="text-[10px] font-medium text-foreground-muted uppercase tracking-wider">{kpi.label}</p>
+                  <p className="text-xl font-bold text-foreground font-mono mt-1">{kpi.value}</p>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center text-lg">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg">
                   {kpi.icon}
                 </div>
               </div>
               <div className="flex items-center gap-1 mt-2">
                 {kpi.positive ? (
-                  <TrendingUp size={11} className="text-green-500" />
+                  <TrendingUp size={11} className="text-success" />
                 ) : (
-                  <TrendingDown size={11} className="text-red-500" />
+                  <TrendingDown size={11} className="text-error" />
                 )}
-                <span className="text-[10px] font-medium text-green-600">vs previous period</span>
+                <span className="text-[10px] font-medium text-success">vs previous period</span>
               </div>
             </Card>
           ))
@@ -122,15 +122,15 @@ export default function RevenueDetailPage() {
       </div>
 
       {/* Period Selection */}
-      <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5 w-fit">
+      <div className="flex items-center gap-1 bg-surface-elevated rounded-lg p-0.5 w-fit">
         {PERIOD_TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setPeriod(tab.key)}
             className={`px-4 py-1.5 text-xs font-medium rounded-md transition-colors ${
               period === tab.key
-                ? "bg-white shadow-sm text-primary-600"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-surface shadow-sm text-primary"
+                : "text-foreground-muted hover:text-foreground"
             }`}
           >
             {tab.label}
@@ -177,7 +177,7 @@ export default function RevenueDetailPage() {
             </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">
+          <div className="h-[300px] flex items-center justify-center text-sm text-foreground-muted">
             No revenue data for this period
           </div>
         )}
@@ -206,7 +206,7 @@ export default function RevenueDetailPage() {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[220px] flex items-center justify-center text-sm text-slate-400">
+          <div className="h-[220px] flex items-center justify-center text-sm text-foreground-muted">
             No data available
           </div>
         )}
@@ -214,18 +214,18 @@ export default function RevenueDetailPage() {
 
       {/* Detailed Data Table */}
       <Card padding="none">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Calendar size={14} className="text-primary-600" />
-            <h3 className="text-sm font-semibold text-slate-800">Period Breakdown</h3>
+            <Calendar size={14} className="text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Period Breakdown</h3>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100">
+              <tr className="border-b border-border">
                 {["Period", "Revenue", "Orders", "Avg Order", "Revenue Share"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-foreground-muted uppercase tracking-wider">
                     {h}
                   </th>
                 ))}
@@ -233,7 +233,7 @@ export default function RevenueDetailPage() {
             </thead>
             <tbody>
               {!chartData || chartData.length === 0 ? (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-400">No data available</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-sm text-foreground-muted">No data available</td></tr>
               ) : (
                 chartData.map((entry, i) => {
                   const avgOrd = entry.orders > 0 ? Math.round(entry.revenue / entry.orders) : 0;
@@ -241,23 +241,23 @@ export default function RevenueDetailPage() {
                   return (
                     <tr
                       key={i}
-                      className={`${i < chartData.length - 1 ? "border-b border-slate-50" : ""} hover:bg-slate-50 transition-colors`}
+                      className={`${i < chartData.length - 1 ? "border-b border-border" : ""} hover:bg-surface-elevated transition-colors`}
                     >
-                      <td className="px-4 py-3 text-xs font-medium text-slate-700">{entry.date}</td>
-                      <td className="px-4 py-3 text-xs font-bold text-primary-600 font-mono">
+                      <td className="px-4 py-3 text-xs font-medium text-foreground">{entry.date}</td>
+                      <td className="px-4 py-3 text-xs font-bold text-primary font-mono">
                         {formatCurrency(entry.revenue)}
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-600 font-mono">{entry.orders}</td>
-                      <td className="px-4 py-3 text-xs text-slate-600 font-mono">{formatCurrency(avgOrd)}</td>
+                      <td className="px-4 py-3 text-xs text-foreground-muted font-mono">{entry.orders}</td>
+                      <td className="px-4 py-3 text-xs text-foreground-muted font-mono">{formatCurrency(avgOrd)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden max-w-[80px]">
+                          <div className="flex-1 h-1.5 bg-surface-elevated rounded-full overflow-hidden max-w-[80px]">
                             <div
-                              className="h-full bg-primary-500 rounded-full"
+                              className="h-full bg-primary rounded-full"
                               style={{ width: `${share}%` }}
                             />
                           </div>
-                          <span className="text-[10px] text-slate-500 font-mono">{share}%</span>
+                          <span className="text-[10px] text-foreground-muted font-mono">{share}%</span>
                         </div>
                       </td>
                     </tr>
