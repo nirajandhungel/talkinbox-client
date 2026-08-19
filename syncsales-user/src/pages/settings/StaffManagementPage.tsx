@@ -45,14 +45,14 @@ function AddStaffModal({ roles, onAdd, onClose }: AddStaffModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-slate-800">Add Staff Member</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-lg leading-none">×</button>
+      <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-sm font-bold text-foreground">Add Staff Member</h2>
+          <button onClick={onClose} className="text-foreground-muted hover:text-foreground-muted text-lg leading-none">×</button>
         </div>
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {error && (
-            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+            <p className="text-xs text-error bg-error/10 border border-error/20 rounded-lg px-3 py-2">{error}</p>
           )}
           <Input label="Full Name" placeholder="Jane Smith" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
           <Input label="Email" type="email" placeholder="jane@company.com" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
@@ -101,17 +101,17 @@ function StaffRow({ staff, roleName, onDeactivate, onReactivate, onChangeRole, r
 
   return (
     <div className={cn(
-      "flex items-center gap-4 py-4 px-5 border-b border-slate-50 last:border-0 transition-colors",
+      "flex items-center gap-4 py-4 px-5 border-b border-border last:border-0 transition-colors",
       !staff.isActive && "opacity-60"
     )}>
       <Avatar initials={initials} size="sm" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-slate-800 truncate">{staff.name}</p>
-          {isSelf && <span className="text-[10px] bg-primary-50 text-primary-600 px-1.5 py-0.5 rounded-full font-medium">You</span>}
-          {!staff.isActive && <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full font-medium">Inactive</span>}
+          <p className="text-sm font-semibold text-foreground truncate">{staff.name}</p>
+          {isSelf && <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium">You</span>}
+          {!staff.isActive && <span className="text-[10px] bg-surface-elevated text-foreground-muted px-1.5 py-0.5 rounded-full font-medium">Inactive</span>}
         </div>
-        <p className="text-xs text-slate-500 truncate">{staff.email}</p>
+        <p className="text-xs text-foreground-muted truncate">{staff.email}</p>
       </div>
 
       {/* Role inline select */}
@@ -119,7 +119,7 @@ function StaffRow({ staff, roleName, onDeactivate, onReactivate, onChangeRole, r
         value={staff.roleId}
         onChange={(e) => onChangeRole(e.target.value)}
         disabled={!staff.isActive || isSelf}
-        className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50"
+        className="text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
       >
         {assignableRoles.map((r) => (
           <option key={r.id} value={r.id}>{r.name}</option>
@@ -127,7 +127,7 @@ function StaffRow({ staff, roleName, onDeactivate, onReactivate, onChangeRole, r
       </select>
 
       {/* Role badge */}
-      <span className="hidden sm:block text-[10px] font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded-full min-w-[70px] text-center">
+      <span className="hidden sm:block text-[10px] font-medium bg-surface-elevated text-foreground-muted px-2 py-1 rounded-full min-w-[70px] text-center">
         {roleName}
       </span>
 
@@ -136,25 +136,25 @@ function StaffRow({ staff, roleName, onDeactivate, onReactivate, onChangeRole, r
         <div className="relative">
           <button
             onClick={() => setMenuOpen((v) => !v)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-lg text-foreground-muted hover:text-foreground-muted hover:bg-surface-elevated transition-colors"
           >
             <MoreVertical size={14} />
           </button>
           {menuOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 top-8 z-20 bg-white rounded-xl shadow-card-lg border border-slate-100 w-40 overflow-hidden">
+              <div className="absolute right-0 top-8 z-20 bg-surface rounded-xl shadow-card-lg border border-border w-40 overflow-hidden">
                 {staff.isActive ? (
                   <button
                     onClick={() => { onDeactivate(); setMenuOpen(false); }}
-                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-error hover:bg-error/10 transition-colors"
                   >
                     <PowerOff size={13} /> Deactivate
                   </button>
                 ) : (
                   <button
                     onClick={() => { onReactivate(); setMenuOpen(false); }}
-                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-green-600 hover:bg-green-50 transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-success hover:bg-success/10 transition-colors"
                   >
                     <Power size={13} /> Reactivate
                   </button>
@@ -249,8 +249,8 @@ export default function StaffManagementPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-slate-800">Staff Management</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h2 className="text-base font-bold text-foreground">Staff Management</h2>
+          <p className="text-xs text-foreground-muted mt-0.5">
             {activeCount} of {MAX_STAFF} active staff accounts
           </p>
         </div>
@@ -267,9 +267,9 @@ export default function StaffManagementPage() {
 
       {/* Limit warning */}
       {!canAddMore && (
-        <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-          <ShieldCheck size={15} className="text-amber-600 shrink-0" />
-          <p className="text-xs text-amber-700">
+        <div className="flex items-center gap-2.5 bg-warning/10 border border-warning/20 rounded-xl px-4 py-3">
+          <ShieldCheck size={15} className="text-warning shrink-0" />
+          <p className="text-xs text-warning">
             You've reached the maximum of {MAX_STAFF} active staff accounts. Deactivate one to add another.
           </p>
         </div>
@@ -280,14 +280,14 @@ export default function StaffManagementPage() {
         <CardHeader title="Your Team" subtitle="Manage team members and their roles" />
         {loading ? (
           <div className="flex items-center justify-center py-10">
-            <Loader2 size={20} className="text-primary-600 animate-spin" />
+            <Loader2 size={20} className="text-primary animate-spin" />
           </div>
         ) : staff.length === 0 ? (
           <div className="py-10 text-center">
-            <p className="text-sm text-slate-500">No staff members yet. Add your first team member.</p>
+            <p className="text-sm text-foreground-muted">No staff members yet. Add your first team member.</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-50">
+          <div className="divide-y divide-border">
             {staff.map((s) => (
               <StaffRow
                 key={s.id}

@@ -117,8 +117,8 @@ export default function AutomationPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-lg font-bold text-slate-800">Automation</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h2 className="text-lg font-bold text-foreground">Automation</h2>
+          <p className="text-xs text-foreground-muted mt-0.5">
             {activeCount} active rules · {totalRuns.toLocaleString()} total executions
           </p>
         </div>
@@ -128,7 +128,7 @@ export default function AutomationPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-1 border-b border-slate-200">
+      <div className="flex items-center gap-1 border-b border-border">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           const TabIcon = tab.icon;
@@ -137,13 +137,13 @@ export default function AutomationPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors ${
-                isActive ? "text-primary-600" : "text-slate-500 hover:text-slate-700"
+                isActive ? "text-primary" : "text-foreground-muted hover:text-foreground"
               }`}
             >
               <TabIcon size={13} />
               {tab.label}
               {isActive && (
-                <motion.div layoutId="autoTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+                <motion.div layoutId="autoTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary text-primary-foreground rounded-full" />
               )}
             </button>
           );
@@ -161,8 +161,8 @@ export default function AutomationPage() {
           {!isLoading && automations.length === 0 && (
             <Card padding="md">
               <div className="py-8 text-center">
-                <p className="text-sm font-semibold text-slate-800">No automation rules found</p>
-                <p className="text-xs text-slate-500 mt-1">Create your first rule to automate tasks.</p>
+                <p className="text-sm font-semibold text-foreground">No automation rules found</p>
+                <p className="text-xs text-foreground-muted mt-1">Create your first rule to automate tasks.</p>
               </div>
             </Card>
           )}
@@ -171,38 +171,35 @@ export default function AutomationPage() {
             return (
               <Card key={automation.id} padding="md">
                 <div className="flex items-center gap-4">
-                  <div className={`p-2.5 rounded-xl ${automation.active ? "bg-primary-50" : "bg-slate-50"}`}>
-                    <AutoIcon size={16} className={automation.active ? "text-primary-600" : "text-slate-400"} />
+                  <div className={`p-2.5 rounded-xl ${automation.active ? "bg-primary/10" : "bg-surface-elevated"}`}>
+                    <AutoIcon size={16} className={automation.active ? "text-primary" : "text-foreground-muted"} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-800">{automation.name}</p>
+                    <p className="text-sm font-semibold text-foreground">{automation.name}</p>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">
+                      <span className="text-[10px] bg-surface-elevated text-foreground-muted px-1.5 py-0.5 rounded font-medium">
                         WHEN: {automation.trigger}
                       </span>
-                      <span className="text-slate-300">→</span>
-                      <span className="text-[10px] bg-primary-50 text-primary-700 px-1.5 py-0.5 rounded font-medium">
+                      <span className="text-foreground-muted">→</span>
+                      <span className="text-[10px] bg-primary/10 text-primary-hover px-1.5 py-0.5 rounded font-medium">
                         THEN: {automation.action}
                       </span>
                     </div>
                   </div>
                   <div className="text-right mr-4 hidden sm:block">
-                    <p className="text-sm font-bold text-slate-700">{(automation.triggered || 0).toLocaleString()}</p>
-                    <p className="text-[10px] text-slate-400">total runs</p>
+                    <p className="text-sm font-bold text-foreground">{(automation.triggered || 0).toLocaleString()}</p>
+                    <p className="text-[10px] text-foreground-muted">total runs</p>
                   </div>
-                  <Badge
-                    color={automation.active ? "#10B981" : "#6B7280"}
-                    bg={automation.active ? "#f0fdf4" : "#f9fafb"}
-                  >
+                  <Badge tone={automation.active ? "success" : "muted"}>
                     {automation.active ? "Active" : "Paused"}
                   </Badge>
                   <button
                     onClick={() => toggleAutomation(automation.id, automation.active)}
-                    className="text-slate-400 hover:text-primary-600 transition-colors disabled:opacity-50"
+                    className="text-foreground-muted hover:text-primary transition-colors disabled:opacity-50"
                     disabled={toggleMutation.isPending}
                   >
                     {automation.active ? (
-                      <ToggleRight size={24} className="text-primary-600" />
+                      <ToggleRight size={24} className="text-primary" />
                     ) : (
                       <ToggleLeft size={24} />
                     )}
@@ -239,7 +236,7 @@ export default function AutomationPage() {
 
             {/* Tone Selection */}
             <div className="mt-4">
-              <p className="text-xs font-semibold text-slate-600 mb-2">Conversation Tone</p>
+              <p className="text-xs font-semibold text-foreground-muted mb-2">Conversation Tone</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {TONE_OPTIONS.map((tone) => (
                   <button
@@ -248,8 +245,8 @@ export default function AutomationPage() {
                     className={cn(
                       "flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-all",
                       personality.tone === tone.value
-                        ? "border-primary-300 bg-primary-50 text-primary-700 ring-1 ring-primary-200"
-                        : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                        ? "border-primary/40 bg-primary/10 text-primary-hover ring-1 ring-primary/30"
+                        : "border-border text-foreground-muted hover:border-border hover:bg-surface-elevated"
                     )}
                   >
                     <span className="text-base">{tone.emoji}</span>
@@ -261,7 +258,7 @@ export default function AutomationPage() {
 
             {/* Speed */}
             <div className="mt-4">
-              <p className="text-xs font-semibold text-slate-600 mb-2">Response Speed</p>
+              <p className="text-xs font-semibold text-foreground-muted mb-2">Response Speed</p>
               <div className="flex gap-2">
                 {[
                   { value: "instant", label: "⚡ Instant", desc: "< 1 second" },
@@ -274,12 +271,12 @@ export default function AutomationPage() {
                     className={cn(
                       "flex-1 px-3 py-2.5 rounded-lg border text-center transition-all",
                       personality.responseSpeed === speed.value
-                        ? "border-primary-300 bg-primary-50 ring-1 ring-primary-200"
-                        : "border-slate-200 hover:border-slate-300"
+                        ? "border-primary/40 bg-primary/10 ring-1 ring-primary/30"
+                        : "border-border hover:border-border"
                     )}
                   >
-                    <p className="text-xs font-medium text-slate-700">{speed.label}</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{speed.desc}</p>
+                    <p className="text-xs font-medium text-foreground">{speed.label}</p>
+                    <p className="text-[10px] text-foreground-muted mt-0.5">{speed.desc}</p>
                   </button>
                 ))}
               </div>
@@ -309,25 +306,25 @@ export default function AutomationPage() {
               <textarea
                 value={personality.greeting}
                 onChange={(e) => setPersonality((p) => ({ ...p, greeting: e.target.value }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 resize-none"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                 rows={3}
               />
             ) : (
-              <div className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5">
-                <p className="text-sm text-slate-700">{personality.greeting}</p>
+              <div className="bg-surface-elevated border border-border rounded-lg px-3 py-2.5">
+                <p className="text-sm text-foreground">{personality.greeting}</p>
               </div>
             )}
 
             {/* Preview */}
-            <div className="mt-4 bg-slate-900 rounded-xl p-4">
-              <p className="text-[10px] text-slate-400 mb-2 uppercase tracking-wider">Chat Preview</p>
+            <div className="mt-4 bg-background rounded-xl p-4">
+              <p className="text-[10px] text-foreground-muted mb-2 uppercase tracking-wider">Chat Preview</p>
               <div className="flex gap-2">
-                <div className="w-7 h-7 rounded-full bg-primary-600 flex items-center justify-center shrink-0">
-                  <Bot size={12} className="text-white" />
+                <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                  <Bot size={12} className="text-primary-foreground" />
                 </div>
-                <div className="bg-slate-800 rounded-xl rounded-tl-sm px-3 py-2 max-w-[80%]">
-                  <p className="text-xs text-slate-200">{personality.greeting}</p>
-                  <p className="text-[9px] text-slate-500 mt-1">{personality.name} · just now</p>
+                <div className="bg-surface-elevated rounded-xl rounded-tl-sm px-3 py-2 max-w-[80%]">
+                  <p className="text-xs text-foreground">{personality.greeting}</p>
+                  <p className="text-[9px] text-foreground-muted mt-1">{personality.name} · just now</p>
                 </div>
               </div>
             </div>
@@ -340,11 +337,11 @@ export default function AutomationPage() {
               {personality.features.map((feature) => (
                 <div
                   key={feature.id}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-surface-elevated transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${feature.enabled ? "bg-green-500" : "bg-slate-300"}`} />
-                    <span className="text-sm text-slate-700">{feature.label}</span>
+                    <div className={`w-2 h-2 rounded-full ${feature.enabled ? "bg-success" : "bg-border"}`} />
+                    <span className="text-sm text-foreground">{feature.label}</span>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -353,7 +350,7 @@ export default function AutomationPage() {
                       onChange={() => toggleFeature(feature.id)}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600" />
+                    <div className="w-9 h-5 bg-surface-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary text-primary-foreground" />
                   </label>
                 </div>
               ))}

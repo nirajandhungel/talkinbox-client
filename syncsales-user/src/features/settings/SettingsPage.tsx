@@ -3,6 +3,7 @@ import { Save, Store, Bell, Shield, Palette, Users, ShieldCheck } from "lucide-r
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { ThemePicker } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/auth/useAuth";
 import { useToast } from "@/components/feedback/Toast";
 import { PermissionGate } from "@/auth/PermissionGate";
@@ -44,8 +45,8 @@ export default function SettingsPage() {
                 className={cn(
                   "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
                   activeSection === s.id
-                    ? "bg-primary-50 text-primary-700"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-primary/10 text-primary-hover"
+                    : "text-foreground-muted hover:bg-surface-elevated"
                 )}
               >
                 <Icon size={14} />
@@ -59,7 +60,7 @@ export default function SettingsPage() {
         {isOwner && (
           <>
             <div className="pt-3 pb-1">
-              <p className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+              <p className="px-3 text-[10px] font-semibold text-foreground-muted uppercase tracking-wider">
                 Administration
               </p>
             </div>
@@ -70,7 +71,7 @@ export default function SettingsPage() {
                   <button
                     key={s.id}
                     onClick={() => navigate(s.route)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-foreground-muted hover:bg-surface-elevated transition-colors"
                   >
                     <Icon size={14} />
                     {s.label}
@@ -116,11 +117,11 @@ export default function SettingsPage() {
                 "Payment received",
                 "Daily sales summary",
               ].map(item => (
-                <div key={item} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
-                  <span className="text-sm text-slate-700">{item}</span>
+                <div key={item} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <span className="text-sm text-foreground">{item}</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" defaultChecked className="sr-only peer" />
-                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600" />
+                    <div className="w-9 h-5 bg-surface-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:border after:border-border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary" />
                   </label>
                 </div>
               ))}
@@ -146,23 +147,18 @@ export default function SettingsPage() {
 
         {activeSection === "appearance" && (
           <Card>
-            <CardHeader title="Appearance" subtitle="Customize your dashboard" />
-            <div className="space-y-4">
+            <CardHeader title="Appearance" subtitle="Choose how SyncSales looks on this device" />
+            <div className="space-y-5">
               <div>
-                <p className="text-xs font-medium text-slate-600 mb-2">Theme Color</p>
-                <div className="flex gap-2">
-                  {["#006D5B", "#3B82F6", "#8B5CF6", "#EF4444", "#F59E0B"].map(color => (
-                    <button
-                      key={color}
-                      className="w-7 h-7 rounded-full ring-2 ring-offset-2 ring-transparent hover:ring-slate-300 transition-all"
-                      style={{ background: color }}
-                    />
-                  ))}
-                </div>
+                <p className="text-xs font-medium text-foreground-muted mb-3">Theme</p>
+                <ThemePicker />
+                <p className="text-[11px] text-foreground-muted mt-3">
+                  Dark is the default. Your choice is saved on this device and restored on the next visit.
+                </p>
               </div>
               <div>
-                <p className="text-xs font-medium text-slate-600 mb-2">Language</p>
-                <select className="text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none">
+                <p className="text-xs font-medium text-foreground-muted mb-2">Language</p>
+                <select className="text-sm border border-border rounded-lg px-3 py-2 bg-surface-elevated text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20">
                   <option>English</option>
                   <option>नेपाली (Nepali)</option>
                 </select>
@@ -179,13 +175,13 @@ export default function SettingsPage() {
               <div>
                 <span className={cn(
                   "text-xs font-bold px-2.5 py-1 rounded-full border uppercase tracking-wide",
-                  tenant?.plan === "pro" ? "bg-primary-50 text-primary-700 border-primary-200" :
-                  tenant?.plan === "enterprise" ? "bg-purple-50 text-purple-700 border-purple-200" :
-                  "bg-slate-100 text-slate-600 border-slate-200"
+                  tenant?.plan === "pro" ? "bg-primary/10 text-primary-hover border-primary/30" :
+                  tenant?.plan === "enterprise" ? "bg-primary-soft text-primary border-primary/30" :
+                  "bg-surface-elevated text-foreground-muted border-border"
                 )}>
                   {tenant?.plan ?? "Starter"} Plan
                 </span>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-foreground-muted mt-2">
                   Up to 3 staff accounts · All core features included
                 </p>
               </div>

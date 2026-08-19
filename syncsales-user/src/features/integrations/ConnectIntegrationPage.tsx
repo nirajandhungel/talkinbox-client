@@ -13,7 +13,7 @@ export default function ConnectIntegrationPage() {
 
   return (
     <Card>
-      <p className="text-xs text-slate-500">Redirecting to the integrations flow…</p>
+      <p className="text-xs text-foreground-muted">Redirecting to the integrations flow…</p>
     </Card>
   );
 }

@@ -640,8 +640,8 @@ export default function IntegrationsPage() {
     >
       {/* Page header */}
       <div>
-        <h2 className="text-lg font-bold text-slate-800">Integrations</h2>
-        <p className="text-xs text-slate-500 mt-0.5">
+        <h2 className="text-lg font-bold text-foreground">Integrations</h2>
+        <p className="text-xs text-foreground-muted mt-0.5">
           Connect your Meta platforms to sync messages, orders, and customers.
         </p>
       </div>
@@ -666,7 +666,7 @@ export default function IntegrationsPage() {
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="bg-white rounded-xl border border-slate-100 p-5 h-40 skeleton"
+                    className="bg-surface rounded-xl border border-border p-5 h-40 skeleton"
                   />
                 ))}
               </div>
@@ -700,7 +700,7 @@ export default function IntegrationsPage() {
                           <div className="flex items-center gap-3">
                             <PlatformIconBox platform={p} size={46} />
                             <div>
-                              <p className="text-sm font-bold text-slate-800">
+                              <p className="text-sm font-bold text-foreground">
                                 {cfg.name}
                               </p>
                               <StatusChip status={status} />
@@ -708,7 +708,7 @@ export default function IntegrationsPage() {
                           </div>
                         </div>
 
-                        <p className="text-xs text-slate-500 leading-relaxed flex-1">
+                        <p className="text-xs text-foreground-muted leading-relaxed flex-1">
                           {cfg.description}
                         </p>
 
@@ -807,7 +807,7 @@ export default function IntegrationsPage() {
             )}
 
             {/* How it works */}
-            <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-wrap gap-6">
+            <div className="mt-4 p-4 bg-surface-elevated rounded-xl border border-border flex flex-wrap gap-6">
               {[
                 {
                   num: "01",
@@ -843,10 +843,10 @@ export default function IntegrationsPage() {
                     {h.num}
                   </span>
                   <div>
-                    <p className="text-xs font-semibold text-slate-700">
+                    <p className="text-xs font-semibold text-foreground">
                       {h.title}
                     </p>
-                    <p className="text-[11px] text-slate-400">{h.body}</p>
+                    <p className="text-[11px] text-foreground-muted">{h.body}</p>
                   </div>
                 </div>
               ))}
@@ -906,11 +906,11 @@ export default function IntegrationsPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-base font-bold text-slate-800">
+                  <h3 className="text-base font-bold text-foreground">
                     Connect{" "}
                     {PLATFORM_CONFIG[activePlatform].name} to SyncSales
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                  <p className="text-xs text-foreground-muted mt-1.5 leading-relaxed">
                     {PLATFORM_CONFIG[activePlatform].helpText}
                   </p>
                 </div>
@@ -943,19 +943,19 @@ export default function IntegrationsPage() {
                       >
                         {i + 1}
                       </div>
-                      <span className="text-xs text-slate-600">{text}</span>
+                      <span className="text-xs text-foreground-muted">{text}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Status badge */}
                 {metaBaseAccount?.status === "connecting" ? (
-                  <div className="flex items-center gap-2 text-xs text-blue-600 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-2 text-xs text-primary bg-primary-soft border border-primary/20 rounded-lg px-3 py-2">
                     <Loader2 size={13} className="animate-spin" />
                     Completing authorization…
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-2 text-xs text-warning bg-warning/10 border border-warning/20 rounded-lg px-3 py-2">
                     <span
                       style={{
                         width: 6,
@@ -997,7 +997,7 @@ export default function IntegrationsPage() {
                   </Button>
                 </div>
 
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-foreground-muted">
                   If the popup didn't open, allow popups in your browser and
                   try again.
                 </p>
@@ -1040,10 +1040,10 @@ export default function IntegrationsPage() {
               <div className="flex items-center gap-3 mb-4">
                 <PlatformIconBox platform={activePlatform} size={40} />
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">
+                  <h3 className="text-sm font-bold text-foreground">
                     Select {PLATFORM_CONFIG[activePlatform].name} Account
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-foreground-muted">
                     Choose the accounts you want to connect to SyncSales.
                   </p>
                 </div>
@@ -1052,13 +1052,13 @@ export default function IntegrationsPage() {
               {/* Account list */}
               <div className="space-y-2 min-h-[80px]">
                 {isLoadingAvailable ? (
-                  <div className="flex items-center gap-2 p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 p-4 bg-surface-elevated rounded-xl border border-border text-xs text-foreground-muted">
                     <Loader2 size={14} className="animate-spin" />
                     Fetching your {PLATFORM_CONFIG[activePlatform].name}{" "}
                     accounts…
                   </div>
                 ) : availableError ? (
-                  <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl">
+                  <div className="p-4 bg-error/10 border border-error/20 rounded-xl">
                     <div className="flex items-start gap-2">
                       <AlertCircle
                         size={14}
@@ -1081,11 +1081,11 @@ export default function IntegrationsPage() {
                     </div>
                   </div>
                 ) : availableAccounts.length === 0 ? (
-                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                    <p className="text-xs font-semibold text-slate-700">
+                  <div className="p-4 bg-surface-elevated border border-border rounded-xl">
+                    <p className="text-xs font-semibold text-foreground">
                       No Facebook Pages found
                     </p>
-                    <div className="text-[11px] text-slate-500 mt-1 space-y-1">
+                    <div className="text-[11px] text-foreground-muted mt-1 space-y-1">
                       <p>Make sure:</p>
                       <ol className="list-decimal pl-4 space-y-0.5">
                         <li>Your account is full Admin on at least one Page.</li>
@@ -1152,21 +1152,21 @@ export default function IntegrationsPage() {
                         />
                         <AccountAvatar name={acct.name} size={36} />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-800 truncate">
+                          <p className="text-sm font-semibold text-foreground truncate">
                             {acct.name}
                           </p>
                           {acct.category && (
-                            <p className="text-[10px] text-slate-400">
+                            <p className="text-[10px] text-foreground-muted">
                               {acct.category}
                             </p>
                           )}
                           {acct.metadata?.username && (
-                            <p className="text-[10px] text-slate-500">
+                            <p className="text-[10px] text-foreground-muted">
                               @{acct.metadata.username}
                             </p>
                           )}
                           {acct.metadata?.phoneNumbers?.length ? (
-                            <p className="text-[10px] text-slate-500 mt-0.5">
+                            <p className="text-[10px] text-foreground-muted mt-0.5">
                               {acct.metadata.phoneNumbers
                                 .map(
                                   (ph) =>
@@ -1203,7 +1203,7 @@ export default function IntegrationsPage() {
               </div>
 
               {/* Footer actions */}
-              <div className="flex items-center gap-2 mt-5 pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2 mt-5 pt-4 border-t border-border">
                 <Button
                   variant="ghost"
                   onClick={backToDashboard}
@@ -1213,7 +1213,7 @@ export default function IntegrationsPage() {
                 </Button>
                 <div className="flex-1" />
                 {selectedIds.length > 0 && (
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-foreground-muted">
                     {selectedIds.length} selected
                   </span>
                 )}
@@ -1273,10 +1273,10 @@ export default function IntegrationsPage() {
                 </motion.div>
 
                 <div>
-                  <h3 className="text-base font-bold text-slate-800">
+                  <h3 className="text-base font-bold text-foreground">
                     {PLATFORM_CONFIG[activePlatform].name} Connected!
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                  <p className="text-xs text-foreground-muted mt-1.5 leading-relaxed">
                     Your integration is active. New messages will start
                     appearing in your SyncSales inbox within minutes.
                   </p>
@@ -1306,10 +1306,10 @@ export default function IntegrationsPage() {
                           }}
                         >
                           <AccountAvatar name={a.displayName ?? "Account"} size={28} />
-                          <span className="text-xs font-semibold text-slate-700 truncate flex-1 text-left">
+                          <span className="text-xs font-semibold text-foreground truncate flex-1 text-left">
                             {a.displayName ?? "Account"}
                           </span>
-                          <CheckCircle size={13} className="text-green-500 shrink-0" />
+                          <CheckCircle size={13} className="text-success shrink-0" />
                         </div>
                       ))}
                     </div>
