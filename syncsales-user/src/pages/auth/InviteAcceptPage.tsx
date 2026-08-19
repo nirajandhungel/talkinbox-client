@@ -40,39 +40,39 @@ export default function InviteAcceptPage() {
   }, [token, validateInvite]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br bg-background flex items-center justify-center px-4">
       <div className="relative w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-surface rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-7 text-center">
+          <div className="bg-gradient-to-r bg-surface-elevated px-8 py-7 text-center">
             <div className="flex items-center justify-center gap-2.5 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center">
-                <Zap size={18} className="text-white" />
+              <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
+                <Zap size={18} className="text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-white">
-                Sync<span className="text-primary-400">Sales</span>
+              <span className="text-xl font-bold text-primary-foreground">
+                Sync<span className="text-primary">Sales</span>
               </span>
             </div>
-            <p className="text-slate-400 text-sm">You've been invited to join</p>
+            <p className="text-foreground-muted text-sm">You've been invited to join</p>
           </div>
 
           {/* Body */}
           <div className="px-8 py-10 text-center space-y-6">
             {status === "loading" && (
               <div className="flex flex-col items-center gap-3">
-                <Loader2 size={32} className="text-primary-600 animate-spin" />
-                <p className="text-sm text-slate-500">Validating your invite…</p>
+                <Loader2 size={32} className="text-primary animate-spin" />
+                <p className="text-sm text-foreground-muted">Validating your invite…</p>
               </div>
             )}
 
             {status === "valid" && invite && (
               <>
-                <div className="w-16 h-16 rounded-full bg-green-50 border border-green-100 flex items-center justify-center mx-auto">
-                  <CheckCircle size={28} className="text-green-500" />
+                <div className="w-16 h-16 rounded-full bg-success/10 border border-success/20 flex items-center justify-center mx-auto">
+                  <CheckCircle size={28} className="text-success" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-lg font-bold text-slate-800">Your invite is valid!</h2>
-                  <p className="text-sm text-slate-500">
+                  <h2 className="text-lg font-bold text-foreground">Your invite is valid!</h2>
+                  <p className="text-sm text-foreground-muted">
                     Set up your SyncSales business account to get started.
                   </p>
                 </div>
@@ -88,12 +88,12 @@ export default function InviteAcceptPage() {
 
             {status === "invalid" && (
               <>
-                <div className="w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center mx-auto">
-                  <AlertCircle size={28} className="text-red-500" />
+                <div className="w-16 h-16 rounded-full bg-error/10 border border-error/20 flex items-center justify-center mx-auto">
+                  <AlertCircle size={28} className="text-error" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-lg font-bold text-slate-800">Invalid Invite</h2>
-                  <p className="text-sm text-slate-500">{errorMsg}</p>
+                  <h2 className="text-lg font-bold text-foreground">Invalid Invite</h2>
+                  <p className="text-sm text-foreground-muted">{errorMsg}</p>
                 </div>
                 <Button variant="secondary" className="w-full" onClick={() => navigate("/login")}>
                   Back to Login

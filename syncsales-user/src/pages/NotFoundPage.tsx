@@ -7,12 +7,12 @@ export default function NotFoundPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
-      <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mb-6">
-        <SearchX size={36} className="text-slate-400" />
+      <div className="w-20 h-20 rounded-2xl bg-surface-elevated flex items-center justify-center mb-6">
+        <SearchX size={36} className="text-foreground-muted" />
       </div>
-      <h1 className="text-4xl font-extrabold text-slate-800 mb-2">404</h1>
-      <p className="text-sm text-slate-500 mb-1">Page not found</p>
-      <p className="text-xs text-slate-400 max-w-sm mb-6">
+      <h1 className="text-4xl font-extrabold text-foreground mb-2">404</h1>
+      <p className="text-sm text-foreground-muted mb-1">Page not found</p>
+      <p className="text-xs text-foreground-muted max-w-sm mb-6">
         The page you're looking for doesn't exist or has been moved.
         Check the URL or navigate back to the dashboard.
       </p>
