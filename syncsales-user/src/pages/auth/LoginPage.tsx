@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Zap, Mail, Lock, Eye, EyeOff, AlertCircle, WifiOff, Clock } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, AlertCircle, WifiOff, Clock } from "lucide-react";
 import { useAuth } from "@/auth/useAuth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { getErrorMessage, isApiError, apiClient } from "@/api/client";
+import { AuthShell, AuthCard, AuthHeader, AuthAlert } from "@/pages/auth/AuthLayout";
 
 function GoogleIcon() {
   return (
@@ -91,53 +92,41 @@ export default function LoginPage() {
     }
   }
 
-  const errorColors = {
-    offline: { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", icon: <WifiOff size={15} className="text-amber-500 shrink-0 mt-0.5" /> },
-    pending: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", icon: <Clock size={15} className="text-blue-500 shrink-0 mt-0.5" /> },
-    error: { bg: "bg-red-50", border: "border-red-200", text: "text-red-700", icon: <AlertCircle size={15} className="text-red-500 shrink-0 mt-0.5" /> },
-  };
+  const alertVariant = error?.type === "offline" ? "warning" : error?.type === "pending" ? "info" : "error";
+  const alertIcon = error?.type === "offline"
+    ? <WifiOff size={15} className="shrink-0 mt-0.5" />
+    : error?.type === "pending"
+    ? <Clock size={15} className="shrink-0 mt-0.5" />
+    : <AlertCircle size={15} className="shrink-0 mt-0.5" />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-indigo-600/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative w-full max-w-md space-y-5">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-7 text-center">
-            <div className="flex items-center justify-center gap-2.5 mb-3">
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center">
-                <Zap size={18} className="text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">Sync<span className="text-indigo-400">Sales</span></span>
-            </div>
-            <p className="text-slate-400 text-sm">Sign in to your business dashboard</p>
-          </div>
+    <AuthShell>
+      <div className="space-y-5">
+        <AuthCard>
+          <AuthHeader subtitle="Sign in to your business dashboard" />
 
           <div className="px-8 pt-6 pb-2">
             <button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
-              className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-3 border-2 border-border rounded-xl px-4 py-3 text-sm font-semibold text-foreground hover:bg-surface-elevated transition-all disabled:opacity-60"
             >
-              {googleLoading ? <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" /> : <GoogleIcon />}
+              {googleLoading ? <div className="w-4 h-4 border-2 border-foreground-muted border-t-transparent rounded-full animate-spin" /> : <GoogleIcon />}
               Continue with Google
             </button>
             <div className="relative my-5">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200" /></div>
-              <div className="relative flex justify-center"><span className="bg-white px-3 text-xs text-slate-400">or sign in with email</span></div>
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
+              <div className="relative flex justify-center"><span className="bg-surface px-3 text-xs text-foreground-muted">or sign in with email</span></div>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="px-8 pb-6 space-y-5">
             {error && (
-              <div className={`flex items-start gap-3 rounded-lg px-4 py-3 border ${errorColors[error.type].bg} ${errorColors[error.type].border}`}>
-                {errorColors[error.type].icon}
-                <p className={`text-xs ${errorColors[error.type].text}`}>{error.message}</p>
-              </div>
+              <AuthAlert variant={alertVariant}>
+                {alertIcon}
+                <p>{error.message}</p>
+              </AuthAlert>
             )}
             <Input label="Email address" type="email" placeholder="you@company.com" value={email} onChange={(e) => { setEmail(e.target.value); setError(null); }} prefix={<Mail size={14} />} autoComplete="email" required />
             <Input
@@ -145,29 +134,29 @@ export default function LoginPage() {
               value={password} onChange={(e) => { setPassword(e.target.value); setError(null); }}
               prefix={<Lock size={14} />}
               suffix={
-                <button type="button" onClick={() => setShowPassword((v) => !v)} className="hover:text-slate-600 transition-colors">
+                <button type="button" onClick={() => setShowPassword((v) => !v)} className="hover:text-foreground transition-colors">
                   {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
               }
               autoComplete="current-password" required
             />
             <div className="flex justify-end -mt-2">
-              <Link to="/forgot-password" className="text-xs text-indigo-600 hover:text-indigo-500 transition-colors">Forgot password?</Link>
+              <Link to="/forgot-password" className="text-xs text-primary hover:text-primary-hover transition-colors">Forgot password?</Link>
             </div>
             <Button type="submit" className="w-full" size="md" loading={submitting} disabled={submitting}>Sign In</Button>
           </form>
 
-          <div className="px-8 pb-6 text-center border-t pt-4">
-            <div className="text-sm text-slate-600">
+          <div className="px-8 pb-6 text-center border-t border-border pt-4">
+            <div className="text-sm text-foreground-muted">
               Don't have an account?{" "}
-              <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">Register your business</Link>
+              <Link to="/register" className="font-semibold text-primary hover:text-primary-hover transition-colors">Register your business</Link>
             </div>
           </div>
-        </div>
-        <p className="text-center text-xs text-slate-500">
-          By signing in you agree to our <a href="#" className="text-slate-400 hover:text-white">Terms of Service</a> & <a href="#" className="text-slate-400 hover:text-white">Privacy Policy</a>
+        </AuthCard>
+        <p className="text-center text-xs text-foreground-muted">
+          By signing in you agree to our <a href="#" className="text-foreground-muted hover:text-foreground transition-colors">Terms of Service</a> & <a href="#" className="text-foreground-muted hover:text-foreground transition-colors">Privacy Policy</a>
         </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }

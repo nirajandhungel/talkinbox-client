@@ -148,37 +148,37 @@ export default function RegisterPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br bg-background flex items-center justify-center px-4 py-8">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-indigo-600/5 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-lg space-y-5">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-surface rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-6">
+          <div className="bg-gradient-to-r bg-surface-elevated px-8 py-6">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-                <Zap size={16} className="text-white" />
+              <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
+                <Zap size={16} className="text-primary-foreground" />
               </div>
-              <span className="text-lg font-bold text-white">
-                Sync<span className="text-indigo-400">Sales</span>
+              <span className="text-lg font-bold text-primary-foreground">
+                Sync<span className="text-primary">Sales</span>
               </span>
             </div>
-            <h1 className="text-white font-bold text-xl">Create Your Account</h1>
-            <p className="text-slate-400 text-sm mt-1">Start managing your business with AI</p>
+            <h1 className="text-foreground font-bold text-xl">Create Your Account</h1>
+            <p className="text-foreground-muted text-sm mt-1">Start managing your business with AI</p>
 
             <div className="flex items-center gap-2 mt-4">
               {steps.map((step, i) => (
                 <div key={step.label} className="flex items-center gap-2">
                   <div className={`flex items-center gap-1.5 text-[10px] font-semibold px-2 py-1 rounded-full transition-colors ${
-                    step.done ? "bg-green-500/20 text-green-400" : "bg-white/10 text-slate-400"
+                    step.done ? "bg-success/20 text-success" : "bg-surface/10 text-foreground-muted"
                   }`}>
                     {step.done ? <CheckCircle size={10} /> : <span className="w-3 h-3 rounded-full border border-current flex items-center justify-center text-[8px]">{i + 1}</span>}
                     {step.label}
                   </div>
-                  {i < steps.length - 1 && <div className="w-4 h-px bg-white/20" />}
+                  {i < steps.length - 1 && <div className="w-4 h-px bg-surface/20" />}
                 </div>
               ))}
             </div>
@@ -190,18 +190,18 @@ export default function RegisterPage() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
-              className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-3 border-2 border-border rounded-xl px-4 py-3 text-sm font-semibold text-foreground hover:bg-surface-elevated hover:border-border transition-all disabled:opacity-60"
             >
               {googleLoading ? (
-                <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-foreground-muted border-t-transparent rounded-full animate-spin" />
               ) : <GoogleIcon />}
               Continue with Google
             </button>
 
             <div className="relative my-5">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200" /></div>
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
               <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs text-slate-400">or register with email</span>
+                <span className="bg-surface px-3 text-xs text-foreground-muted">or register with email</span>
               </div>
             </div>
           </div>
@@ -209,26 +209,26 @@ export default function RegisterPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-8 pb-7 space-y-4">
             {error && (
-              <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-lg px-3.5 py-3">
-                <AlertCircle size={15} className="text-red-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-red-700">{error}</p>
+              <div className="flex items-start gap-2.5 bg-error/10 border border-error/20 rounded-lg px-3.5 py-3">
+                <AlertCircle size={15} className="text-error shrink-0 mt-0.5" />
+                <p className="text-xs text-error">{error}</p>
               </div>
             )}
 
             <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Business</p>
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-3">Business</p>
               <Input label="Business Name" placeholder="My Awesome Store" value={form.business_name} onChange={update("business_name")} prefix={<Building2 size={14} />} />
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Personal</p>
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Personal</p>
               <Input label="Full Name" placeholder="John Doe" value={form.name} onChange={update("name")} prefix={<User size={14} />} required />
               <Input label="Email Address" type="email" placeholder="you@company.com" value={form.email} onChange={update("email")} prefix={<Mail size={14} />} autoComplete="email" required />
               <Input label="Phone Number" type="tel" placeholder="98XXXXXXXX" value={form.phone} onChange={update("phone")} prefix={<Phone size={14} />} required />
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Security</p>
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Security</p>
               <Input
                 label="Password"
                 type={showPassword ? "text" : "password"}
@@ -237,7 +237,7 @@ export default function RegisterPage() {
                 onChange={update("password")}
                 prefix={<Lock size={14} />}
                 suffix={
-                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="hover:text-slate-600">
+                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="hover:text-foreground-muted">
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 }
@@ -262,10 +262,10 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <div className="px-8 pb-6 flex flex-col gap-3 text-center bg-slate-50/50 pt-4 border-t">
-            <div className="text-sm text-slate-600">
+          <div className="px-8 pb-6 flex flex-col gap-3 text-center bg-surface-elevated/50 pt-4 border-t">
+            <div className="text-sm text-foreground-muted">
               Already have an account?{" "}
-              <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+              <Link to="/login" className="font-semibold text-primary hover:text-primary-hover transition-colors">
                 Sign in instead
               </Link>
             </div>
