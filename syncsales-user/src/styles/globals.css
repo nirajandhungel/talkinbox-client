@@ -2,11 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Semantic tokens as R G B channels so Tailwind can do bg-primary/10, etc.
+  Components should use bg-background, bg-surface, text-foreground — not raw hex.
+
+  Dark is the default (html / html.dark). Light only when html.light is set.
+  color-scheme lives OUTSIDE @layer so Chromium Auto Dark Mode does not invert the UI.
+*/
+
+html,
+html.dark {
+  color-scheme: dark;
+
+  --background: 0 0 0;
+  --surface: 8 11 9;
+  --surface-elevated: 17 21 18;
+  --border: 28 42 33;
+
+  --brand: 0 255 89;
+  --primary: 0 255 89;
+  --primary-hover: 0 230 79;
+  --primary-foreground: 0 0 0;
+
+  --foreground: 255 255 255;
+  --foreground-muted: 167 176 170;
+  --foreground-disabled: 89 97 92;
+
+  --success: 0 255 89;
+  --warning: 255 176 32;
+  --error: 255 77 77;
+  --info: 240 248 255;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.45);
+  --shadow-card-md: 0 4px 12px rgb(0 0 0 / 0.45);
+  --shadow-card-lg: 0 12px 32px rgb(0 0 0 / 0.55);
+}
+
+html.light {
+  color-scheme: light;
+
+  --background: 248 250 249;
+  --surface: 255 255 255;
+  --surface-elevated: 255 255 255;
+  --border: 221 229 224;
+
+  --brand: 0 255 89;
+  --primary: 0 201 74;
+  --primary-hover: 0 184 67;
+  --primary-foreground: 0 0 0;
+
+  --foreground: 11 15 12;
+  --foreground-muted: 102 113 106;
+  --foreground-disabled: 154 163 157;
+
+  --success: 0 201 74;
+  --warning: 255 176 32;
+  --error: 255 77 77;
+  --info: 240 248 255;
+
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-card-md: 0 4px 6px rgb(0 0 0 / 0.05), 0 2px 4px rgb(0 0 0 / 0.05);
+  --shadow-card-lg: 0 10px 15px rgb(0 0 0 / 0.06), 0 4px 6px rgb(0 0 0 / 0.06);
+}
+
 @layer base {
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    border-color: rgb(var(--border));
   }
 
   html {
@@ -16,29 +80,58 @@
     scroll-behavior: smooth;
   }
 
+  html,
+  body,
+  #root {
+    min-height: 100%;
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+  }
+
   body {
-    @apply bg-surface-secondary text-slate-800;
     font-size: 14px;
     line-height: 1.5;
   }
 
+  ::selection {
+    background-color: rgb(var(--primary) / 0.28);
+    color: rgb(var(--foreground));
+  }
+
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-primary-500;
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: rgb(var(--surface-elevated));
+    color: rgb(var(--foreground));
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(var(--foreground-muted));
   }
 }
 
 @layer components {
   .skeleton {
-    @apply relative overflow-hidden bg-slate-100 rounded;
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(var(--surface-elevated));
+    border-radius: 0.25rem;
   }
 
   .skeleton::after {
     content: "";
-    @apply absolute inset-0;
+    position: absolute;
+    inset: 0;
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgba(255, 255, 255, 0.6) 50%,
+      rgb(var(--foreground) / 0.08) 50%,
       transparent 100%
     );
     background-size: 200% 100%;
@@ -47,7 +140,7 @@
 
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #e2e8f0 transparent;
+    scrollbar-color: rgb(var(--border)) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -60,12 +153,56 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #e2e8f0;
+    background-color: rgb(var(--border));
     border-radius: 9999px;
   }
-}
 
-/* ─── Mobile Utilities ──────────────────────── */
+  .tone-success {
+    background-color: rgb(var(--success) / 0.12);
+    color: rgb(var(--success));
+  }
+  .tone-warning {
+    background-color: rgb(var(--warning) / 0.12);
+    color: rgb(var(--warning));
+  }
+  .tone-error {
+    background-color: rgb(var(--error) / 0.12);
+    color: rgb(var(--error));
+  }
+  .tone-info {
+    background-color: rgb(var(--primary) / 0.1);
+    color: rgb(var(--primary));
+  }
+  .tone-muted {
+    background-color: rgb(var(--surface-elevated));
+    color: rgb(var(--foreground-muted));
+  }
+  .tone-primary {
+    background-color: rgb(var(--primary) / 0.1);
+    color: rgb(var(--primary));
+  }
+
+  .alert-error {
+    background-color: rgb(var(--error) / 0.1);
+    border: 1px solid rgb(var(--error) / 0.2);
+    color: rgb(var(--error));
+  }
+  .alert-warning {
+    background-color: rgb(var(--warning) / 0.1);
+    border: 1px solid rgb(var(--warning) / 0.2);
+    color: rgb(var(--warning));
+  }
+  .alert-success {
+    background-color: rgb(var(--success) / 0.1);
+    border: 1px solid rgb(var(--success) / 0.2);
+    color: rgb(var(--success));
+  }
+  .alert-info {
+    background-color: rgb(var(--primary) / 0.1);
+    border: 1px solid rgb(var(--primary) / 0.2);
+    color: rgb(var(--primary));
+  }
+}
 
 @layer utilities {
   .safe-area-bottom {
@@ -73,7 +210,6 @@
   }
 }
 
-/* Mobile table → card conversion helper */
 @media (max-width: 767px) {
   .mobile-card-table thead {
     display: none;
@@ -87,8 +223,8 @@
   .mobile-card-table tr {
     display: flex;
     flex-wrap: wrap;
-    background: #fff;
-    border: 1px solid #f1f5f9;
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
     border-radius: 0.75rem;
     padding: 0.75rem;
     gap: 0.5rem;
