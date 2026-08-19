@@ -1,7 +1,7 @@
 // ─── Domain Types ────────────────────────────────────────────────
 
 export type Platform = "whatsapp" | "instagram" | "facebook" | "tiktok" | "email" | "daraz" | "website";
-export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled" | "returned";
+export type OrderStatus = "held" | "pending_payment" | "confirmed" | "cancelled" | "expired" | "no_show" | "completed" | "returned";
 export type PaymentStatus = "paid" | "pending" | "refunded" | "failed";
 export type StockStatus = "active" | "low" | "critical" | "out";
 export type CustomerTier = "Bronze" | "Silver" | "Gold" | "Platinum";
