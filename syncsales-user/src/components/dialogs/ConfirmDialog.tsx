@@ -26,20 +26,20 @@ export function ConfirmDialog() {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
             transition={{ type: "spring", duration: 0.3 }}
-            className="bg-white rounded-2xl shadow-card-lg p-6 w-full max-w-md"
+            className="bg-surface rounded-2xl shadow-card-lg p-6 w-full max-w-md"
           >
             <div className="flex items-start gap-4">
-              <div className={`p-2.5 rounded-xl ${variant === "danger" ? "bg-red-50" : "bg-amber-50"}`}>
+              <div className={`p-2.5 rounded-xl ${variant === "danger" ? "bg-error/10" : "bg-warning/10"}`}>
                 {variant === "danger"
-                  ? <Trash2 size={20} className="text-red-500" />
-                  : <AlertTriangle size={20} className="text-amber-500" />
+                  ? <Trash2 size={20} className="text-error" />
+                  : <AlertTriangle size={20} className="text-warning" />
                 }
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-base font-semibold text-slate-800">{title}</h3>
-                <p className="text-sm text-slate-500 mt-1">{description}</p>
+                <h3 className="text-base font-semibold text-foreground">{title}</h3>
+                <p className="text-sm text-foreground-muted mt-1">{description}</p>
               </div>
-              <button onClick={close} className="text-slate-400 hover:text-slate-600 transition-colors">
+              <button onClick={close} className="text-foreground-muted hover:text-foreground-muted transition-colors">
                 <X size={18} />
               </button>
             </div>

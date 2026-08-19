@@ -45,7 +45,7 @@ export function NetworkStatusBanner() {
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -50, opacity: 0 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="fixed top-0 left-0 right-0 z-[9999] flex items-center justify-center gap-2 bg-red-600 text-white text-xs font-semibold py-2 px-4 shadow-lg"
+                    className="fixed top-0 left-0 right-0 z-[9999] flex items-center justify-center gap-2 bg-error text-primary-foreground text-xs font-semibold py-2 px-4 shadow-lg"
                 >
                     <WifiOff size={13} className="shrink-0" />
                     <span>No internet connection. Some features may be unavailable.</span>
@@ -58,7 +58,7 @@ export function NetworkStatusBanner() {
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -50, opacity: 0 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="fixed top-0 left-0 right-0 z-[9999] flex items-center justify-center gap-2 bg-green-600 text-white text-xs font-semibold py-2 px-4 shadow-lg"
+                    className="fixed top-0 left-0 right-0 z-[9999] flex items-center justify-center gap-2 bg-primary text-primary-foreground text-xs font-semibold py-2 px-4 shadow-lg"
                 >
                     <Wifi size={13} className="shrink-0" />
                     <span>Connection restored.</span>

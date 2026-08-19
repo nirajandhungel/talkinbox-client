@@ -8,10 +8,10 @@ const VARIANT_CONFIG: Record<ToastVariant, {
   icon: LucideIcon;
   className: string;
 }> = {
-  success: { icon: CheckCircle, className: "border-green-200 bg-green-50 text-green-800" },
-  error: { icon: XCircle, className: "border-red-200 bg-red-50 text-red-800" },
-  warning: { icon: AlertTriangle, className: "border-amber-200 bg-amber-50 text-amber-800" },
-  info: { icon: Info, className: "border-blue-200 bg-blue-50 text-blue-800" },
+  success: { icon: CheckCircle, className: "border-success/20 bg-surface text-success" },
+  error: { icon: XCircle, className: "border-error/20 bg-surface text-error" },
+  warning: { icon: AlertTriangle, className: "border-warning/20 bg-surface text-warning" },
+  info: { icon: Info, className: "border-border bg-surface text-foreground" },
 };
 
 export function ToastStack() {
