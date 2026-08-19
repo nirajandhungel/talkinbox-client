@@ -379,6 +379,17 @@ interface AiOwnerMessageResponse {
   model: string;
 }
 
+export interface AiModelOption {
+  id: string;
+  provider: string;
+  name?: string;
+}
+
+interface AiModelsResponse {
+  local_providers?: AiModelOption[];
+  openrouter_models?: AiModelOption[];
+}
+
 export const aiApi = {
   generateReply: (conversationId: string, context?: string) =>
     apiClient.post<AiReplyResponse>("/ai/reply", { conversationId, context }),
@@ -389,11 +400,14 @@ export const aiApi = {
   getStatus: () =>
     apiClient.get<AiStatusResponse>("/ai/status"),
 
+  getModels: () =>
+    apiClient.get<AiModelsResponse>("/ai/models"),
+
   sendOwnerMessage: (customerId: string, prompt: string) =>
     apiClient.post<AiOwnerMessageResponse>("/ai/owner-message", { customerId, prompt }),
 
-  simulate: (prompt: string, tone?: string) =>
-    apiClient.post<{ aiReply: string; simulated: boolean; model: string }>("/ai/simulate", { prompt, tone }),
+  simulate: (prompt: string, tone?: string, provider?: string, model?: string) =>
+    apiClient.post<{ aiReply: string; simulated: boolean; model: string }>("/ai/simulate", { prompt, tone, provider, model }),
 
   getConversationHistory: (conversationId: string, limit = 20) =>
     apiClient.get<Message[]>(`/ai/conversations/${conversationId}/history?limit=${limit}`),
