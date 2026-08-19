@@ -30,8 +30,8 @@ export default function ForgotPasswordPage() {
       } else {
         setError("If that email is registered, a reset code was sent.");
       }
-    } catch (err: any) {
-      setError(err?.message || "Failed to send reset code.");
+    } catch (err) {
+      setError(getErrorMessage(err) || "Failed to send reset code.");
     } finally {
       setSubmitting(false);
     }
@@ -56,44 +56,44 @@ export default function ForgotPasswordPage() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-10 text-center space-y-4 max-w-sm w-full">
-          <CheckCircle size={48} className="text-green-500 mx-auto" />
-          <h2 className="text-xl font-bold text-slate-800">Password Reset!</h2>
-          <p className="text-sm text-slate-500">Redirecting to login…</p>
+      <div className="min-h-screen bg-gradient-to-br bg-background flex items-center justify-center px-4">
+        <div className="bg-surface rounded-2xl shadow-2xl p-10 text-center space-y-4 max-w-sm w-full">
+          <CheckCircle size={48} className="text-success mx-auto" />
+          <h2 className="text-xl font-bold text-foreground">Password Reset!</h2>
+          <p className="text-sm text-foreground-muted">Redirecting to login…</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br bg-background flex items-center justify-center px-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
       </div>
       <div className="relative w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-7 text-center">
+        <div className="bg-surface rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-r bg-surface-elevated px-8 py-7 text-center">
             <div className="flex items-center justify-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center">
-                <Zap size={18} className="text-white" />
+              <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+                <Zap size={18} className="text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-white">Sync<span className="text-indigo-400">Sales</span></span>
+              <span className="text-xl font-bold text-primary-foreground">Sync<span className="text-primary">Sales</span></span>
             </div>
-            <div className="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mx-auto mb-3">
-              {stage === "email" ? <Mail size={26} className="text-indigo-400" /> : <KeyRound size={26} className="text-indigo-400" />}
+            <div className="w-14 h-14 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto mb-3">
+              {stage === "email" ? <Mail size={26} className="text-primary" /> : <KeyRound size={26} className="text-primary" />}
             </div>
-            <h1 className="text-white font-bold text-xl">{stage === "email" ? "Forgot Password" : "Reset Password"}</h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <h1 className="text-foreground font-bold text-xl">{stage === "email" ? "Forgot Password" : "Reset Password"}</h1>
+            <p className="text-foreground-muted text-sm mt-1">
               {stage === "email" ? "Enter your email to receive a reset code." : `Enter the code sent to ${email}`}
             </p>
           </div>
 
           <div className="px-8 py-7 space-y-5">
             {error && (
-              <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-lg px-3.5 py-3">
-                <AlertCircle size={15} className="text-red-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-red-700">{error}</p>
+              <div className="flex items-start gap-2.5 bg-error/10 border border-error/20 rounded-lg px-3.5 py-3">
+                <AlertCircle size={15} className="text-error shrink-0 mt-0.5" />
+                <p className="text-xs text-error">{error}</p>
               </div>
             )}
 
@@ -130,7 +130,7 @@ export default function ForgotPasswordPage() {
             )}
 
             <div className="text-center">
-              <Link to="/login" className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors justify-center">
+              <Link to="/login" className="flex items-center gap-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors justify-center">
                 <ArrowLeft size={13} />
                 Back to login
               </Link>

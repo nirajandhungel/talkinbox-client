@@ -97,11 +97,11 @@ export default function VerifyOtpPage() {
 
   if (verified) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-10 text-center space-y-4 max-w-sm w-full">
-          <CheckCircle size={52} className="text-green-500 mx-auto" />
-          <h2 className="text-xl font-bold text-slate-800">Email Verified!</h2>
-          <p className="text-sm text-slate-500">Setting up your business profile…</p>
+      <div className="min-h-screen bg-gradient-to-br bg-background flex items-center justify-center px-4">
+        <div className="bg-surface rounded-2xl shadow-2xl p-10 text-center space-y-4 max-w-sm w-full">
+          <CheckCircle size={52} className="text-success mx-auto" />
+          <h2 className="text-xl font-bold text-foreground">Email Verified!</h2>
+          <p className="text-sm text-foreground-muted">Setting up your business profile…</p>
           <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto" />
         </div>
       </div>
@@ -109,45 +109,45 @@ export default function VerifyOtpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br bg-background flex items-center justify-center px-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-indigo-600/5 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-surface rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-7 text-center">
+          <div className="bg-gradient-to-r bg-surface-elevated px-8 py-7 text-center">
             <div className="flex items-center justify-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center">
-                <Zap size={18} className="text-white" />
+              <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+                <Zap size={18} className="text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-white">
-                Sync<span className="text-indigo-400">Sales</span>
+              <span className="text-xl font-bold text-primary-foreground">
+                Sync<span className="text-primary">Sales</span>
               </span>
             </div>
-            <div className="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mx-auto mb-3">
-              <Mail size={26} className="text-indigo-400" />
+            <div className="w-14 h-14 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto mb-3">
+              <Mail size={26} className="text-primary" />
             </div>
-            <h1 className="text-white font-bold text-xl">Check Your Email</h1>
-            <p className="text-slate-400 text-sm mt-1.5">
+            <h1 className="text-foreground font-bold text-xl">Check Your Email</h1>
+            <p className="text-foreground-muted text-sm mt-1.5">
               We sent a 6-digit code to<br />
-              <span className="text-indigo-300 font-medium">{state?.email}</span>
+              <span className="text-primary font-medium">{state?.email}</span>
             </p>
           </div>
 
           {/* OTP Input */}
           <div className="px-8 py-8 space-y-6">
             {error && (
-              <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-lg px-3.5 py-3">
-                <AlertCircle size={15} className="text-red-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-red-700">{error}</p>
+              <div className="flex items-start gap-2.5 bg-error/10 border border-error/20 rounded-lg px-3.5 py-3">
+                <AlertCircle size={15} className="text-error shrink-0 mt-0.5" />
+                <p className="text-xs text-error">{error}</p>
               </div>
             )}
 
             <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 text-center">
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-4 text-center">
                 Enter verification code
               </p>
               <div className="flex gap-3 justify-center" onPaste={handlePaste}>
@@ -162,8 +162,8 @@ export default function VerifyOtpPage() {
                     onChange={(e) => handleInput(i, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(i, e)}
                     className={`w-11 h-14 text-center text-xl font-bold border-2 rounded-xl outline-none transition-all
-                      ${digit ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-slate-200 text-slate-800"}
-                      focus:border-indigo-500 focus:bg-indigo-50/50`}
+                      ${digit ? "border-primary bg-primary-soft text-primary" : "border-border text-foreground"}
+                      focus:border-primary focus:bg-primary-soft/50`}
                   />
                 ))}
               </div>
@@ -180,12 +180,12 @@ export default function VerifyOtpPage() {
             </Button>
 
             <div className="text-center space-y-2">
-              <p className="text-sm text-slate-500">Didn't receive the code?</p>
+              <p className="text-sm text-foreground-muted">Didn't receive the code?</p>
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={resendCooldown > 0 || resending}
-                className="flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-500 disabled:text-slate-400 disabled:cursor-not-allowed mx-auto transition-colors"
+                className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-hover disabled:text-foreground-muted disabled:cursor-not-allowed mx-auto transition-colors"
               >
                 <RefreshCw size={13} className={resending ? "animate-spin" : ""} />
                 {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
@@ -194,7 +194,7 @@ export default function VerifyOtpPage() {
 
             <button
               onClick={() => navigate("/register")}
-              className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors mx-auto"
+              className="flex items-center gap-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors mx-auto"
             >
               <ArrowLeft size={13} />
               Back to registration
