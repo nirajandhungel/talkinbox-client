@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { DEBOUNCE_DELAY, DEFAULT_PAGE_SIZE } from "@/constants";
 export { useApiMutation } from "./useApiMutation";
+export { useChartTheme } from "./useChartTheme";
 
 
 // ─── usePagination ────────────────────────────────────────────────
