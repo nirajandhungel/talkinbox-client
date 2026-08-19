@@ -29,22 +29,55 @@ interface UIStore {
   sidebarCollapsed: boolean;
   mobileSidebarOpen: boolean;
   aiPanelOpen: boolean;
+  theme: "dark" | "light";
   toggleSidebar: () => void;
   toggleMobileSidebar: () => void;
   setMobileSidebarOpen: (value: boolean) => void;
   toggleAiPanel: () => void;
   setSidebarCollapsed: (value: boolean) => void;
+  toggleTheme: () => void;
+  setTheme: (theme: "dark" | "light") => void;
 }
+
+const THEME_KEY = "syncsales_theme";
+
+export function applyTheme(theme: "dark" | "light") {
+  localStorage.setItem(THEME_KEY, theme);
+  const root = document.documentElement;
+  root.classList.toggle("dark", theme === "dark");
+  root.classList.toggle("light", theme === "light");
+  root.style.colorScheme = theme;
+}
+
+const getInitialTheme = (): "dark" | "light" => {
+  if (typeof document === "undefined") return "dark";
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === "light" || saved === "dark") return saved;
+  return "dark";
+};
+
+const initialTheme = getInitialTheme();
+if (typeof document !== "undefined") applyTheme(initialTheme);
 
 export const useUIStore = create<UIStore>((set) => ({
   sidebarCollapsed: false,
   mobileSidebarOpen: false,
   aiPanelOpen: false,
+  theme: initialTheme,
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
   toggleMobileSidebar: () => set((s) => ({ mobileSidebarOpen: !s.mobileSidebarOpen })),
   setMobileSidebarOpen: (value) => set({ mobileSidebarOpen: value }),
   toggleAiPanel: () => set((s) => ({ aiPanelOpen: !s.aiPanelOpen })),
   setSidebarCollapsed: (value) => set({ sidebarCollapsed: value }),
+  setTheme: (theme) => {
+    applyTheme(theme);
+    set({ theme });
+  },
+  toggleTheme: () => set((s) => {
+    const newTheme = s.theme === "dark" ? "light" : "dark";
+    applyTheme(newTheme);
+    return { theme: newTheme };
+  }),
 }));
 
 // ─── Auth Store (bridge → AuthProvider) ──────────────────────────────────────
