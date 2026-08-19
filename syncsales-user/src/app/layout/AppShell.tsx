@@ -5,7 +5,6 @@ import {
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
-import { AIPanel } from "./AIPanel";
 import { ToastStack } from "@/components/feedback/Toast";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { NetworkStatusBanner } from "@/components/feedback/NetworkStatusBanner";
@@ -24,7 +23,7 @@ export function AppShell() {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen bg-surface-secondary overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Sidebar — hidden on mobile, shown on md+ */}
       <div className="relative hidden md:flex shrink-0">
         <Sidebar />
@@ -37,12 +36,11 @@ export function AppShell() {
           <main className="flex-1 overflow-y-auto scrollbar-thin p-3 sm:p-5 pb-20 md:pb-5">
             <Outlet />
           </main>
-          <AIPanel />
         </div>
       </div>
 
       {/* Mobile Bottom Navigation — shown only on small screens */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-slate-200 safe-area-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-surface border-t border-border safe-area-bottom">
         <div className="flex items-stretch justify-around h-14">
           {MOBILE_NAV.map((item) => {
             const isActive = item.path === "/"
@@ -55,7 +53,7 @@ export function AppShell() {
                 to={item.path}
                 className={cn(
                   "flex flex-col items-center justify-center flex-1 gap-0.5 text-[10px] font-medium transition-colors",
-                  isActive ? "text-primary-600" : "text-slate-400"
+                  isActive ? "text-primary" : "text-foreground-muted"
                 )}
               >
                 <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />

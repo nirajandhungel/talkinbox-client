@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Bell, Search, Bot, Menu, LogOut, Settings, User, ChevronDown, ShieldCheck } from "lucide-react";
+import { Bell, Search, Menu, LogOut, Settings, User, ChevronDown, ShieldCheck } from "lucide-react";
 import { useUIStore } from "@/store";
 import { Avatar } from "@/components/ui/Avatar";
-import { Button } from "@/components/ui/Button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/auth/useAuth";
 import { useConfirmDialog } from "@/store";
 import { cn } from "@/lib/utils";
@@ -54,24 +54,24 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl border border-slate-100 shadow-card-lg z-50 overflow-hidden">
+    <div className="absolute right-0 top-full mt-2 w-64 bg-surface rounded-xl border border-border shadow-card-lg z-50 overflow-hidden">
       {/* Profile header */}
-      <div className="px-4 py-4 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
+      <div className="px-4 py-4 bg-surface-elevated border-b border-border">
         <div className="flex items-center gap-3">
           <Avatar initials={initials} size="md" />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-slate-800 truncate">{user?.name}</p>
-            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+            <p className="text-sm font-semibold text-foreground truncate">{user?.name}</p>
+            <p className="text-xs text-foreground-muted truncate">{user?.email}</p>
             <div className="flex items-center gap-1.5 mt-1">
               <span className={cn(
                 "text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                 isOwner
-                  ? "bg-primary-100 text-primary-700"
-                  : "bg-slate-100 text-slate-600"
+                  ? "bg-primary/20 text-primary-hover"
+                  : "bg-surface-elevated text-foreground-muted"
               )}>
                 {isOwner ? "Owner" : "Staff"}
               </span>
-              <span className="text-[9px] text-slate-400 truncate">{tenant?.businessName}</span>
+              <span className="text-[9px] text-foreground-muted truncate">{tenant?.businessName}</span>
             </div>
           </div>
         </div>
@@ -81,9 +81,9 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
       <div className="py-1.5">
         <button
           onClick={() => go("/settings")}
-          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-foreground hover:bg-surface-elevated transition-colors"
         >
-          <Settings size={14} className="text-slate-400" />
+          <Settings size={14} className="text-foreground-muted" />
           Account Settings
         </button>
 
@@ -91,16 +91,16 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
           <>
             <button
               onClick={() => go("/settings/staff")}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-foreground hover:bg-surface-elevated transition-colors"
             >
-              <User size={14} className="text-slate-400" />
+              <User size={14} className="text-foreground-muted" />
               Manage Staff
             </button>
             <button
               onClick={() => go("/settings/roles")}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-foreground hover:bg-surface-elevated transition-colors"
             >
-              <ShieldCheck size={14} className="text-slate-400" />
+              <ShieldCheck size={14} className="text-foreground-muted" />
               Roles & Permissions
             </button>
           </>
@@ -108,10 +108,10 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Divider + Logout */}
-      <div className="border-t border-slate-100 py-1.5">
+      <div className="border-t border-border py-1.5">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-red-600 hover:bg-red-50 transition-colors font-medium"
+          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-error hover:bg-error/10 transition-colors font-medium"
         >
           <LogOut size={14} />
           Sign Out
@@ -119,11 +119,11 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Plan badge */}
-      <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100">
-        <p className="text-[10px] text-slate-400">
+      <div className="px-4 py-2.5 bg-surface-elevated border-t border-border">
+        <p className="text-[10px] text-foreground-muted">
           <span className={cn(
             "font-bold mr-1 uppercase",
-            tenant?.plan === "pro" ? "text-primary-600" : "text-slate-500"
+            tenant?.plan === "pro" ? "text-primary" : "text-foreground-muted"
           )}>
             {tenant?.plan}
           </span>
@@ -139,7 +139,7 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
 export function Topbar() {
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const { toggleMobileSidebar, toggleAiPanel } = useUIStore();
+  const { toggleMobileSidebar } = useUIStore();
   const { session } = useAuth();
   const location = useLocation();
 
@@ -167,58 +167,60 @@ export function Topbar() {
   const initials = user?.name.split(" ").map((n) => n[0]).join("").slice(0, 2) ?? "?";
 
   return (
-    <header className="h-12 sm:h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-3 bg-white border-b border-slate-100 shrink-0">
+    <header className="h-12 sm:h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-3 bg-surface border-b border-border shrink-0">
       {/* Hamburger — mobile only */}
       <button
         onClick={toggleMobileSidebar}
-        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors md:hidden"
+        className="p-1.5 rounded-lg text-foreground-muted hover:text-foreground-muted hover:bg-surface-elevated transition-colors md:hidden"
       >
         <Menu size={18} />
       </button>
 
-      <h1 className="text-sm font-semibold text-slate-800 mr-auto truncate">{pageLabel}</h1>
+      <h1 className="text-sm font-semibold text-foreground mr-auto truncate">{pageLabel}</h1>
 
       {/* Search */}
       <div className="relative hidden sm:flex items-center">
-        <Search size={13} className="absolute left-3 text-slate-400 pointer-events-none" />
+        <Search size={13} className="absolute left-3 text-foreground-muted pointer-events-none" />
         <input
           placeholder="Search..."
           className={cn(
-            "pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50",
-            "focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500",
+            "pl-8 pr-3 py-1.5 text-xs rounded-lg border border-border bg-surface-elevated",
+            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
             "w-48 transition-all focus:w-64"
           )}
         />
       </div>
 
+      <ThemeToggle />
+
       {/* Notifications */}
       <div className="relative">
         <button
           onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
-          className="relative p-1.5 sm:p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
+          className="relative p-1.5 sm:p-2 rounded-lg text-foreground-muted hover:bg-surface-elevated transition-colors"
         >
           <Bell size={16} />
-          <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-1.5 h-1.5 rounded-full bg-red-500" />
+          <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-1.5 h-1.5 rounded-full bg-error" />
         </button>
 
         {notifOpen && (
           <>
             <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} />
-            <div className="absolute right-0 top-full mt-1 w-72 bg-white rounded-xl border border-slate-100 shadow-card-lg z-40 overflow-hidden">
-              <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
-                <span className="text-xs font-semibold text-slate-800">Notifications</span>
-                <span className="text-[10px] font-medium bg-primary-50 text-primary-700 px-1.5 py-0.5 rounded-full">3 new</span>
+            <div className="absolute right-0 top-full mt-1 w-72 bg-surface rounded-xl border border-border shadow-card-lg z-40 overflow-hidden">
+              <div className="px-4 py-3 border-b border-border flex justify-between items-center">
+                <span className="text-xs font-semibold text-foreground">Notifications</span>
+                <span className="text-[10px] font-medium bg-primary/10 text-primary-hover px-1.5 py-0.5 rounded-full">3 new</span>
               </div>
               {[
-                { text: "New order #1847 from Priya Sharma", time: "2m ago", color: "bg-green-400" },
-                { text: "Low stock alert: Blue Denim Jacket (3 left)", time: "15m ago", color: "bg-amber-400" },
-                { text: "7 unread messages in inbox", time: "30m ago", color: "bg-blue-400" },
+                { text: "New order #1847 from Priya Sharma", time: "2m ago", color: "bg-success" },
+                { text: "Low stock alert: Blue Denim Jacket (3 left)", time: "15m ago", color: "bg-warning" },
+                { text: "7 unread messages in inbox", time: "30m ago", color: "bg-primary" },
               ].map((n, i) => (
-                <div key={i} className="px-4 py-3 border-b border-slate-50 flex gap-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                <div key={i} className="px-4 py-3 border-b border-border flex gap-3 hover:bg-surface-elevated cursor-pointer transition-colors">
                   <div className={cn("w-2 h-2 rounded-full mt-1.5 shrink-0", n.color)} />
                   <div>
-                    <p className="text-xs text-slate-700">{n.text}</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{n.time}</p>
+                    <p className="text-xs text-foreground">{n.text}</p>
+                    <p className="text-[10px] text-foreground-muted mt-0.5">{n.time}</p>
                   </div>
                 </div>
               ))}
@@ -227,17 +229,6 @@ export function Topbar() {
         )}
       </div>
 
-      {/* AI Panel toggle */}
-      <Button variant="secondary" size="sm" icon={<Bot size={13} />} onClick={toggleAiPanel} className="hidden sm:inline-flex">
-        AI
-      </Button>
-      <button
-        onClick={toggleAiPanel}
-        className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors sm:hidden"
-      >
-        <Bot size={16} />
-      </button>
-
       {/* Profile avatar + dropdown */}
       {user && (
         <div className="relative" ref={profileRef}>
@@ -245,7 +236,7 @@ export function Topbar() {
             onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); }}
             className={cn(
               "flex items-center gap-1.5 rounded-lg p-1 transition-colors",
-              profileOpen ? "bg-slate-100" : "hover:bg-slate-50"
+              profileOpen ? "bg-surface-elevated" : "hover:bg-surface-elevated"
             )}
             aria-label="Open profile menu"
             title="Profile & Sign Out"
@@ -254,7 +245,7 @@ export function Topbar() {
             <ChevronDown
               size={12}
               className={cn(
-                "text-slate-400 transition-transform duration-200 hidden sm:block",
+                "text-foreground-muted transition-transform duration-200 hidden sm:block",
                 profileOpen && "rotate-180"
               )}
             />
